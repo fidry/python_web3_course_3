@@ -1,7 +1,6 @@
 import asyncio
-import json
-import os
 import time
+from eth_typing import Address
 from hexbytes import HexBytes
 
 from web3 import AsyncWeb3
@@ -9,15 +8,11 @@ from web3.contract.async_contract import AsyncContract
 
 from client import Client
 from data.models import TokenABI
+from utils import get_json
 
 
-def get_json(path: str | list[str] | tuple[str]):
-    if isinstance(path, (list, tuple)):
-        path = os.path.join(*path)
-    return json.load(open(path))
-
-def get_address_in_polygon(token_name: str) -> str | None:
-    token_dict: dict[str, str] = {
+def get_address_in_polygon(token_name: str) -> str:
+    token_dict: dict[str, Address] = {
         'USDC': '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
         'USDT': '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
         'WETH': '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
@@ -27,13 +22,12 @@ def get_address_in_polygon(token_name: str) -> str | None:
     }
 
     if token_name not in token_dict:
-        print(f'Token {token_name} not supported for swap')
-        return '0x'
+        raise Exception(f'Token {token_name} not supported for swap')
 
-    return token_dict[token_name]
+    return AsyncWeb3.to_checksum_address(token_dict[token_name])
 
 
-def get_decimals_in_polygon(token_name: str) -> int | None:
+def get_decimals_in_polygon(token_name: str) -> int:
     decimals_dict: dict[str, int] = {
         'WMATIC': 18,
         'POL': 18,
@@ -43,50 +37,33 @@ def get_decimals_in_polygon(token_name: str) -> int | None:
     }
 
     if token_name.upper() not in decimals_dict:
-        print(f'{token_name} token decimals unknown')
-        return 0
+        raise Exception(f'{token_name} token decimals unknown')
 
     return decimals_dict[token_name.upper()]
 
 
 class QuickSwap:
     def __init__(self, client: Client):
-        self.__client = client
-        self.__router_address: str = '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff'
-        self.__slippage: float = 0.5
+        self.client = client
+        self.router_address: str = AsyncWeb3.to_checksum_address(
+            '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff'
+        )
+        self.router_abi_path = ('data', 'abis', 'quickswap', 'router_abi.json')
 
-    @property
-    def router_address(self) -> str:
-        return self.get_checksum_address(self.__router_address)
-
-    @property
-    def slippage(self) -> float:
-        return self.__slippage
-
-    @slippage.setter
-    def slippage(self, value: float):
-        if value >= 100 or value <= 0:
-            raise Exception('Incorrect slippage')
-        else:
-            self.__slippage = value
-
-    @classmethod
-    def get_checksum_address(cls, address: str):
-        return AsyncWeb3.to_checksum_address(address)
-    
     async def get_raw_tx_params(self, value: float = 0) -> dict:
         return {
-            "chainId": await self.__client.w3.eth.chain_id,
-            "from": self.__client.account.address,
+            "chainId": await self.client.w3.eth.chain_id,
+            "from": self.client.account.address,
             "value": value,
-            "gasPrice": await self.__client.w3.eth.gas_price,
-            "nonce": await self.__client.w3.eth.get_transaction_count(self.__client.account.address),
+            "gasPrice": await self.client.w3.eth.gas_price,
+            "nonce": await self.client.w3.eth.get_transaction_count(self.client.account.address),
         }
 
     async def swap_native_to_token(
         self,
         native_amount: int | float,
         token_name: str,
+        slippage: float = 0.5
     ) -> HexBytes | None:
         to_token_address = get_address_in_polygon(token_name)
         token_decimals = get_decimals_in_polygon(token_name)
@@ -95,16 +72,15 @@ class QuickSwap:
         if not to_token_address or not token_decimals:
             return 'Failed'
 
-        abi = get_json(('data', 'abis', 'quickswap', 'router_abi.json'))
-        contract: AsyncContract = self.__client.w3.eth.contract(
-            address=self.router_address, abi=abi
+        contract: AsyncContract = self.client.w3.eth.contract(
+            address=self.router_address, abi=get_json(self.router_abi_path)
         )
 
         value = int(native_amount * 10 ** native_decimals)
         amount_out_min = int(
             native_amount
-            * await self.__client.get_token_price('POL')
-            * (1 - self.slippage / 100)
+            * await self.client.get_token_price('POL')
+            * (1 - slippage / 100)
             * 10 ** token_decimals
         )
         
@@ -115,13 +91,13 @@ class QuickSwap:
                 get_address_in_polygon('WETH'),
                 to_token_address,
             ],
-            self.__client.account.address,
+            self.client.account.address,
             2 * int(time.time() + 20 * 60)
         ).build_transaction(await self.get_raw_tx_params(value))
         
-        signed_tx = self.__client.w3.eth.account.sign_transaction(tx_params, self.__client.private_key)
-        tx_hash_bytes = await self.__client.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
-        receipt = await self.__client.w3.eth.wait_for_transaction_receipt(tx_hash_bytes)
+        signed_tx = self.client.w3.eth.account.sign_transaction(tx_params, self.client.private_key)
+        tx_hash_bytes = await self.client.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+        receipt = await self.client.w3.eth.wait_for_transaction_receipt(tx_hash_bytes)
         
         return tx_hash_bytes.hex() if receipt['status'] else 'Failed'
 
@@ -129,37 +105,38 @@ class QuickSwap:
         self,
         token_name: str,
         amount: int | float,
+        slippage: float = 0.5
     ) -> HexBytes | None:
         token_address = get_address_in_polygon(token_name.upper())
         token_decimals = get_decimals_in_polygon(token_name)
         native_decimals = get_decimals_in_polygon('POL')
+        
         if not token_address or not token_decimals:
             return 'Failed'
 
-        abi = get_json(('data', 'abis', 'quickswap', 'router_abi.json'))
-        contract: AsyncContract = self.__client.w3.eth.contract(
-            address=self.router_address, abi=abi
+        contract: AsyncContract = self.client.w3.eth.contract(
+            address=self.router_address, abi=get_json(self.router_abi_path)
         )
-        token_contract: AsyncContract = self.__client.w3.eth.contract(
+        token_contract: AsyncContract = self.client.w3.eth.contract(
             address=token_address, abi=TokenABI
         )
         
         amount_in = int(amount * 10 ** token_decimals)
         amount_out_min = int(
             amount
-            * await self.__client.get_token_price(token_name.upper())
-            * (1 - self.slippage / 100)
+            * await self.client.get_token_price(token_name.upper())
+            * (1 - slippage / 100)
             * 10 ** native_decimals
         )
         
         tx_params = await token_contract.functions.approve(
-            self.__router_address,
+            self.router_address,
             amount_in
         ).build_transaction(await self.get_raw_tx_params())
         
-        signed_tx = self.__client.w3.eth.account.sign_transaction(tx_params, self.__client.private_key)
-        tx_hash_bytes = await self.__client.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
-        receipt = await self.__client.w3.eth.wait_for_transaction_receipt(tx_hash_bytes)
+        signed_tx = self.client.w3.eth.account.sign_transaction(tx_params, self.client.private_key)
+        tx_hash_bytes = await self.client.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+        receipt = await self.client.w3.eth.wait_for_transaction_receipt(tx_hash_bytes)
         
         if receipt['status']:
             waiting_time = 15
@@ -181,15 +158,15 @@ class QuickSwap:
                     get_address_in_polygon('WETH'),
                     get_address_in_polygon('WMATIC'),
                 ],
-                self.__client.account.address,
+                self.client.account.address,
                 2 * int(time.time() + 20 * 60)
             )
         )
 
-        tx_hash_bytes = await self.__client.send_transaction(
+        tx_hash_bytes = await self.client.send_transaction(
             to=self.router_address,
             data=data,
         )
-        receipt = await self.__client.w3.eth.wait_for_transaction_receipt(tx_hash_bytes)
+        receipt = await self.client.w3.eth.wait_for_transaction_receipt(tx_hash_bytes)
         
         return tx_hash_bytes.hex() if receipt['status'] else 'Failed'

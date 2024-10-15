@@ -12,7 +12,6 @@ async def main():
         proxy=config.PROXY
     )
     quickswap = QuickSwap(client)
-    quickswap.slippage = 1
     
     # print(await quickswap.swap_native_to_token(5, 'USDC'))
     # print('Sleep after swap 15 secs...')
