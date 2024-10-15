@@ -93,7 +93,7 @@ class QuickSwap:
         native_decimals = get_decimals_in_polygon('POL')
 
         if not to_token_address or not token_decimals:
-            return None
+            return 'Failed'
 
         abi = get_json(('data', 'abis', 'quickswap', 'router_abi.json'))
         contract: AsyncContract = self.__client.w3.eth.contract(
@@ -134,7 +134,7 @@ class QuickSwap:
         token_decimals = get_decimals_in_polygon(token_name)
         native_decimals = get_decimals_in_polygon('POL')
         if not token_address or not token_decimals:
-            return None
+            return 'Failed'
 
         abi = get_json(('data', 'abis', 'quickswap', 'router_abi.json'))
         contract: AsyncContract = self.__client.w3.eth.contract(

@@ -2,7 +2,7 @@ import asyncio
 
 import config
 from client import Client
-from tasks.quickswap import QuickSwap
+from tasks.quick_swap import QuickSwap
 
 
 async def main():
