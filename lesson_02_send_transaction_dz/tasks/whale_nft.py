@@ -31,7 +31,7 @@ class WhaleNft:
             "nonce": await self.client.w3.eth.get_transaction_count(self.client.account.address),
         }
     
-    async def mint(self, network_name: str = 'Polygon'):
+    async def mint(self, network_name: str = 'Polygon') -> str:
         contract: AsyncContract = self.client.w3.eth.contract(
             address=self.get_mint_contract_by_network(network_name), 
             abi=get_json(self.mint_abi)

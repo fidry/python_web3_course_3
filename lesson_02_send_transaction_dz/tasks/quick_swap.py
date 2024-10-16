@@ -64,7 +64,7 @@ class QuickSwap:
         native_amount: int | float,
         token_name: str,
         slippage: float = 0.5
-    ) -> HexBytes | None:
+    ) -> str:
         to_token_address = get_address_in_polygon(token_name)
         token_decimals = get_decimals_in_polygon(token_name)
         native_decimals = get_decimals_in_polygon('POL')
@@ -106,7 +106,7 @@ class QuickSwap:
         token_name: str,
         amount: int | float,
         slippage: float = 0.5
-    ) -> HexBytes | None:
+    ) -> str:
         token_address = get_address_in_polygon(token_name.upper())
         token_decimals = get_decimals_in_polygon(token_name)
         native_decimals = get_decimals_in_polygon('POL')
