@@ -6,20 +6,21 @@ from utils import get_json
 
 
 class WhaleNft:
+    MINT_ABI = ('data', 'abis', 'whale-app', 'mint_abi.json')
+    MINT_ADDRESS_DICT = {
+        'Polygon': '0xE1c907503B8d1545AFD5A89cc44FC1E538A132DA',
+        'Arbitrum One': '0x26E9934024cdC7fcc9f390973d4D9ac1FA954a37'
+    }
+    
     def __init__(self, client: Client):
         self.client = client
-        self.mint_address_dict = {
-            'Polygon': '0xE1c907503B8d1545AFD5A89cc44FC1E538A132DA',
-            'Arbitrum One': '0x26E9934024cdC7fcc9f390973d4D9ac1FA954a37'
-        }
-        self.mint_abi = ('data', 'abis', 'whale-app', 'mint_abi.json')
     
     def get_mint_contract_by_network(self, network_name: str):
-        if network_name not in self.mint_address_dict:
+        if network_name not in self.MINT_ADDRESS_DICT:
             raise Exception(f'Network {network_name} not supported for mint')
 
         return AsyncWeb3.to_checksum_address(
-            self.mint_address_dict[network_name]
+            self.MINT_ADDRESS_DICT[network_name]
         )
             
     async def get_raw_tx_params(self, value: float = 0) -> dict:
@@ -34,7 +35,7 @@ class WhaleNft:
     async def mint(self, network_name: str = 'Polygon') -> str:
         contract: AsyncContract = self.client.w3.eth.contract(
             address=self.get_mint_contract_by_network(network_name), 
-            abi=get_json(self.mint_abi)
+            abi=get_json(self.MINT_ABI)
         )
         mint_price = await contract.functions.fee().call()
         
