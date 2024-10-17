@@ -43,12 +43,11 @@ def get_decimals_in_polygon(token_name: str) -> int:
 
 
 class QuickSwap:
+    ROUTER_ADDRESS = '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff'
+    ROUTER_ABI_PATH = ('data', 'abis', 'quickswap', 'router_abi.json')
+    
     def __init__(self, client: Client):
         self.client = client
-        self.router_address: str = AsyncWeb3.to_checksum_address(
-            '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff'
-        )
-        self.router_abi_path = ('data', 'abis', 'quickswap', 'router_abi.json')
 
     async def get_raw_tx_params(self, value: float = 0) -> dict:
         return {
@@ -73,7 +72,7 @@ class QuickSwap:
             return 'Failed'
 
         contract: AsyncContract = self.client.w3.eth.contract(
-            address=self.router_address, abi=get_json(self.router_abi_path)
+            address=self.ROUTER_ADDRESS, abi=get_json(self.ROUTER_ABI_PATH)
         )
 
         value = int(native_amount * 10 ** native_decimals)
@@ -115,7 +114,7 @@ class QuickSwap:
             return 'Failed'
 
         contract: AsyncContract = self.client.w3.eth.contract(
-            address=self.router_address, abi=get_json(self.router_abi_path)
+            address=self.ROUTER_ADDRESS, abi=get_json(self.ROUTER_ABI_PATH)
         )
         token_contract: AsyncContract = self.client.w3.eth.contract(
             address=token_address, abi=TokenABI
@@ -130,7 +129,7 @@ class QuickSwap:
         )
         
         tx_params = await token_contract.functions.approve(
-            self.router_address,
+            self.ROUTER_ADDRESS,
             amount_in
         ).build_transaction(await self.get_raw_tx_params())
         
@@ -164,7 +163,7 @@ class QuickSwap:
         )
 
         tx_hash_bytes = await self.client.send_transaction(
-            to=self.router_address,
+            to=self.ROUTER_ADDRESS,
             data=data,
         )
         receipt = await self.client.w3.eth.wait_for_transaction_receipt(tx_hash_bytes)

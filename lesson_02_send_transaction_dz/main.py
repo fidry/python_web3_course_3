@@ -19,12 +19,20 @@ async def main():
         
     # print(await whale_nft.mint())
     
-    # print(await quickswap.swap_native_to_token(5, 'USDC', slippage=1.5))
+    # print(await quickswap.swap_native_to_token(
+    #     native_amount=5, 
+    #     token_name='USDC', 
+    #     slippage=1.5)
+    # )
     # print('Sleep after swap 15 secs...')
     # await asyncio.sleep(15)
-    # print(await quickswap.swap_token_to_native('USDC', 1.8, slippage=1.5))
+    # print(await quickswap.swap_token_to_native(
+    #     token_name='USDC', 
+    #     amount=1.8, 
+    #     slippage=1.5
+    # ))
     
-    # print(await magic_eden.mint_reservoir_polygon_open_mint(3))
+    # print(await magic_eden.mint_reservoir_polygon_open_mint_1(quantity=3))
     
     # print(await magic_eden.mint('0xf13e8fc5bfe323d8c5af3708d205500b994b3815'))
 

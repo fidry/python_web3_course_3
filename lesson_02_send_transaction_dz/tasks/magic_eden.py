@@ -6,20 +6,21 @@ from utils import get_json
 
 
 class MagicEden:
+    SEA_DROP_ADDRESS = '0x00005EA00Ac477B1030CE78506496e8C2dE24bf5'
+    SEA_DROP_ABI_PATH = (
+        'data', 'abis', 'magic_eden', 'sea_drop_abi.json'
+    )
+    
     def __init__(self, client: Client):
         self.client = client
-        self.sea_drop_address = '0x00005EA00Ac477B1030CE78506496e8C2dE24bf5'
-        self.sea_drop_abi_path = (
-            'data', 'abis', 'magic_eden', 'sea_drop_abi.json'
-        )
         
-    async def mint_reservoir_polygon_open_mint_2(self, quantity: int = 1) -> str:
+    async def mint_reservoir_polygon_open_mint_1(self, quantity: int = 1) -> str:
         nft_address = AsyncWeb3.to_checksum_address(
             '0xf13e8fc5bfe323d8c5af3708d205500b994b3815'
         )
         sea_drop_contract: AsyncContract = self.client.w3.eth.contract(
-            address=self.sea_drop_address,
-            abi=get_json(self.sea_drop_abi_path)
+            address=self.SEA_DROP_ADDRESS,
+            abi=get_json(self.SEA_DROP_ABI_PATH)
         )
 
         [fee_recipient_contract] = await sea_drop_contract.functions.getAllowedFeeRecipients(
@@ -49,8 +50,8 @@ class MagicEden:
     async def mint(self, nft_address: str, quantity: int = 1) -> str:
         nft_address = AsyncWeb3.to_checksum_address(nft_address)
         sea_drop_contract: AsyncContract = self.client.w3.eth.contract(
-            address=self.sea_drop_address,
-            abi=get_json(self.sea_drop_abi_path)
+            address=self.SEA_DROP_ADDRESS,
+            abi=get_json(self.SEA_DROP_ABI_PATH)
         )
 
         [fee_recipient_contract] = await sea_drop_contract.functions.getAllowedFeeRecipients(
