@@ -10,76 +10,66 @@ class MagicEden:
     SEA_DROP_ABI_PATH = (
         'data', 'abis', 'magic_eden', 'sea_drop_abi.json'
     )
+    OXYGEN_ABI_PATH = (
+        'data', 'abis', 'magic_eden', 'oxygen_abi.json'
+    )
     
     def __init__(self, client: Client):
         self.client = client
         
-    async def mint_reservoir_polygon_open_mint_1(self, quantity: int = 1) -> str:
+    async def get_raw_tx_params(self, value: float = 0) -> dict:
+        return {
+            "chainId": await self.client.w3.eth.chain_id,
+            "from": self.client.account.address,
+            "value": value,
+            "gasPrice": await self.client.w3.eth.gas_price,
+            "nonce": await self.client.w3.eth.get_transaction_count(self.client.account.address),
+        }
+        
+    async def mint_oxygen_capsule_nft(self) -> str:
         nft_address = AsyncWeb3.to_checksum_address(
-            '0xf13e8fc5bfe323d8c5af3708d205500b994b3815'
+            '0x4bB514EbF031a7f47dA9C5eaB74d6763B14DC78c'
         )
-        sea_drop_contract: AsyncContract = self.client.w3.eth.contract(
-            address=self.SEA_DROP_ADDRESS,
-            abi=get_json(self.SEA_DROP_ABI_PATH)
+        oxygen_contract: AsyncContract = self.client.w3.eth.contract(
+            address=nft_address,
+            abi=get_json(self.OXYGEN_ABI_PATH)
         )
-
-        [fee_recipient_contract] = await sea_drop_contract.functions.getAllowedFeeRecipients(
-            nft_address
-        ).call()
-
-        data = sea_drop_contract.encodeABI(
-            fn_name='mintPublic',
-            args=(
-                nft_address,
-                fee_recipient_contract,
-                self.client.account.address,
-                quantity
-            )
+        
+        mint_price = await oxygen_contract.functions.MINT_PRICE().call()
+        
+        tx_params = await oxygen_contract.functions.safeMint(
+            self.client.account.address
+        ).build_transaction(
+            await self.get_raw_tx_params(value=mint_price)
         )
-
-        tx_hash_bytes = await self.client.send_transaction(
-            to=sea_drop_contract.address,
-            data=data
+        
+        signed_tx = self.client.w3.eth.account.sign_transaction(tx_params, self.client.private_key)
+        tx_hash_bytes = await self.client.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+        receipt = await self.client.w3.eth.wait_for_transaction_receipt(tx_hash_bytes)
+        
+        return tx_hash_bytes.hex() if receipt['status'] else 'Failed'
+    
+    async def mint_oxygen_nft(self, address: str) -> str:
+        nft_address = AsyncWeb3.to_checksum_address(
+            address
         )
-        receipt = await self.client.w3.eth.wait_for_transaction_receipt(
-            tx_hash_bytes
+        oxygen_contract: AsyncContract = self.client.w3.eth.contract(
+            address=nft_address,
+            abi=get_json(self.OXYGEN_ABI_PATH)
         )
-
-        return tx_hash_bytes.hex() if receipt else 'Failed mint'
-
-    async def mint(self, nft_address: str, quantity: int = 1) -> str:
-        nft_address = AsyncWeb3.to_checksum_address(nft_address)
-        sea_drop_contract: AsyncContract = self.client.w3.eth.contract(
-            address=self.SEA_DROP_ADDRESS,
-            abi=get_json(self.SEA_DROP_ABI_PATH)
+        
+        mint_price = await oxygen_contract.functions.MINT_PRICE().call()
+        
+        data = oxygen_contract.encodeABI(
+            'safeMint',
+            args=[self.client.account.address]
         )
-
-        [fee_recipient_contract] = await sea_drop_contract.functions.getAllowedFeeRecipients(
-            nft_address
-        ).call()
-
-        data = sea_drop_contract.encodeABI(
-            fn_name='mintPublic',
-            args=(
-                nft_address,
-                fee_recipient_contract,
-                self.client.account.address,
-                quantity
-            )
+        
+        tx_params = await self.client.send_transaction(
+            to=nft_address,
+            data=data,
+            value=mint_price
         )
-
-        tx_hash_bytes = await self.client.send_transaction(
-            to=sea_drop_contract.address,
-            data=data
-        )
-        receipt = await self.client.w3.eth.wait_for_transaction_receipt(
-            tx_hash_bytes
-        )
-
-        return tx_hash_bytes.hex() if receipt else 'Failed mint'
-
-    async def mint_reservoir_polygon_open_mint_2(self, quantity: int = 1) -> str:
-        return await self.mint(
-            nft_address='0xf13e8fc5bfe323d8c5af3708d205500b994b3815',
-            quantity=quantity
-        )
+        
+        return await self.client.verif_tx(tx_params)
+    

@@ -16,9 +16,14 @@ async def main():
     quickswap = QuickSwap(client)
     whale_nft = WhaleNft(client)
     magic_eden = MagicEden(client)
-        
+    
+    ## №1    
     # print(await whale_nft.mint())
     
+    ## №2
+    # print(await magic_eden.mint_oxygen_capsule_nft())
+    
+    ## №3
     # print(await quickswap.swap_native_to_token(
     #     native_amount=5, 
     #     token_name='USDC', 
@@ -32,9 +37,18 @@ async def main():
     #     slippage=1.5
     # ))
     
-    # print(await magic_eden.mint_reservoir_polygon_open_mint_1(quantity=3))
+    ## №4
+    # print(await quickswap.swap(
+    #     from_token_name='USDC',
+    #     to_token_name='POL',
+    #     amount=2.642942,
+    #     slippage=1
+    # ))
     
-    # print(await magic_eden.mint('0xf13e8fc5bfe323d8c5af3708d205500b994b3815'))
+    # №5
+    # print(await magic_eden.mint_oxygen_nft('0x81309077AB508b2BFA19C8160EBaac9048320F1c'))
+    # await asyncio.sleep(10)
+    # print(await magic_eden.mint_oxygen_nft('0x4bB514EbF031a7f47dA9C5eaB74d6763B14DC78c'))
 
 
 if __name__ == '__main__':
