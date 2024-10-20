@@ -44,7 +44,7 @@ def get_decimals_in_polygon(token_name: str) -> int:
 
 class QuickSwap:
     ROUTER_ADDRESS = '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff'
-    ROUTER_ABI_PATH = ('data', 'abis', 'quickswap', 'router_abi.json')
+    ROUTER_ABI_PATH = ('data', 'abis', 'quick_swap', 'router_abi.json')
     
     def __init__(self, client: Client):
         self.client = client
@@ -166,6 +166,24 @@ class QuickSwap:
             to=self.ROUTER_ADDRESS,
             data=data,
         )
-        receipt = await self.client.w3.eth.wait_for_transaction_receipt(tx_hash_bytes)
-        
-        return tx_hash_bytes.hex() if receipt['status'] else 'Failed'
+        return await self.client.verif_tx(tx_hash_bytes)
+    
+    async def swap(
+        self,
+        from_token_name: str,
+        to_token_name: str,
+        amount: float,
+        slippage: float = 0.5
+    ) -> str:
+        if from_token_name == 'POL':
+            return await self.swap_native_to_token(
+                native_amount=amount,
+                token_name=to_token_name,
+                slippage=slippage
+            )
+        else:
+            return await self.swap_token_to_native(
+                token_name=from_token_name,
+                amount=amount,
+                slippage=slippage
+            )

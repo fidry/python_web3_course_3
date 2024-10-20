@@ -8,11 +8,12 @@
 Подсказка: идем на сайт и минтим вручную в сети, которая будет использоваться в коде.
 
 - задание №2: сделать скрипт на минт на площадке MagicEden в сети Polygon (https://magiceden.io/nft-mints/polygon).
-Скрипт должен уметь минтить любое кол-во NFT из коллекции Reservoir Polygon Open Mint.
+Скрипт должен уметь минтить Oxygen NFT Capsule:
 Пример:
-https://polygonscan.com/tx/0x985b36c678956581a05bebbd41bcc4e26f92715db570f339bbd5f4283a564491
+https://polygonscan.com/tx/0xd59eaa61018ba17647fa82a98f0c77f61b69cfadb56924311a2213eaf5f35559
 Подсказка: сигнатура функции 
-async def mint_reservoir_polygon_open_mint(self, quantity: int = 1) -> str:
+async def mint_oxygen_capsule_nft(self) -> str.
+
 
 - задание №3*: реализовать скрипт для свапов POL->USDC и USDC->POL на площадке QuickSwap USDT/USDT -> POl и наоборот.
 (https://quickswap.exchange/#/swap?swapIndex=1&currency0=0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359&currency1=ETH)
@@ -20,7 +21,10 @@ async def mint_reservoir_polygon_open_mint(self, quantity: int = 1) -> str:
 POl -> USDC https://polygonscan.com/tx/0x7348d54a4554ac46c607dbd2850ea10fe4576e64787afbbb5f84ade5536b2ffa
 USDC -> POL https://polygonscan.com/tx/0x24af5e2b1303534a1dba097ae940a7b265738e980a5b3bade24e311fde3e3af5
 
-- задание №4: найти на площадке MagicEden NFT, которая минтится по такому же ABI, как в задании 2. 
+- задание №4: сделать универсальный свап на основе решения задания №3.
 Подсказка: сигнатура функции
-async def mint(self, nft_address: str, quantity: int = 1) -> str:
+async def swap(self, from_token_name, to_token_name, amount, slippage) -> str.
 
+- задание №5: сделать универсальную функцию минта для NFT от Oxygen на основе решение задания №2.
+Подсказка: сигнатура функции
+async def mint_oxygen_nft(self, address) -> str.

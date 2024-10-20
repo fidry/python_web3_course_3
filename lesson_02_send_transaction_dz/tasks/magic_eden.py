@@ -26,7 +26,7 @@ class MagicEden:
             "nonce": await self.client.w3.eth.get_transaction_count(self.client.account.address),
         }
         
-    async def mint_oxygen_capsule_nft(self):
+    async def mint_oxygen_capsule_nft(self) -> str:
         nft_address = AsyncWeb3.to_checksum_address(
             '0x4bB514EbF031a7f47dA9C5eaB74d6763B14DC78c'
         )
@@ -49,7 +49,7 @@ class MagicEden:
         
         return tx_hash_bytes.hex() if receipt['status'] else 'Failed'
     
-    async def mint_oxygen_nft(self, address: str):
+    async def mint_oxygen_nft(self, address: str) -> str:
         nft_address = AsyncWeb3.to_checksum_address(
             address
         )
