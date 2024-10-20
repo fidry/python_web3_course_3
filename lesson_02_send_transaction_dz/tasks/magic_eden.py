@@ -10,8 +10,8 @@ class MagicEden:
     SEA_DROP_ABI_PATH = (
         'data', 'abis', 'magic_eden', 'sea_drop_abi.json'
     )
-    OXYGEN_CAPSULE_ABI_PATH = (
-        'data', 'abis', 'magic_eden', 'oxygen_capsule_abi.json'
+    OXYGEN_ABI_PATH = (
+        'data', 'abis', 'magic_eden', 'oxygen_abi.json'
     )
     
     def __init__(self, client: Client):
@@ -32,7 +32,7 @@ class MagicEden:
         )
         oxygen_contract: AsyncContract = self.client.w3.eth.contract(
             address=nft_address,
-            abi=get_json(self.OXYGEN_CAPSULE_ABI_PATH)
+            abi=get_json(self.OXYGEN_ABI_PATH)
         )
         
         mint_price = await oxygen_contract.functions.MINT_PRICE().call()
@@ -55,7 +55,7 @@ class MagicEden:
         )
         oxygen_contract: AsyncContract = self.client.w3.eth.contract(
             address=nft_address,
-            abi=get_json(self.OXYGEN_CAPSULE_ABI_PATH)
+            abi=get_json(self.OXYGEN_ABI_PATH)
         )
         
         mint_price = await oxygen_contract.functions.MINT_PRICE().call()
