@@ -39,6 +39,5 @@ class WhaleNft:
             data=data,
             value=mint_price
         )
-        receipt = await self.client.w3.eth.wait_for_transaction_receipt(tx_hash_bytes)
         
-        return tx_hash_bytes.hex() if receipt['status'] else 'Failed'
+        return await self.client.verif_tx(tx_hash_bytes)
