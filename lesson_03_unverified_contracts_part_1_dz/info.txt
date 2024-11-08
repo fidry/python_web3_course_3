@@ -19,8 +19,8 @@ swap_usdt_to_usdc_e
 Функции должны иметь флаг is_all_balance, который будет использовать весь баланс на счету для обмена. Реализацию data
 делать через самописный ABI функции swap.
 Примеры: 
-(0.001 ETH -> 2.87 USDT): https://era.zksync.network/tx/0x0161e7cb528408427fce8eda171a251632d0b28cb89bf8dfd9616189964ae08b
-(1.734763 USDT -> 1.665372 USDC.e): https://era.zksync.network/tx/0x179df85ee97094190b17433b68c0a87f382a39188a44255917ed0afed9a386b2
+(0.001 ETH -> 2.87 USDT): https://explorer.zksync.io/tx/0x0161e7cb528408427fce8eda171a251632d0b28cb89bf8dfd9616189964ae08b
+(1.734763 USDT -> 1.665372 USDC.e): https://explorer.zksync.io/tx/0x179df85ee97094190b17433b68c0a87f382a39188a44255917ed0afed9a386b2
 
 - задание №3*: реализовать скрипт для универсальных свапов from_token -> to_token
 
