@@ -24,12 +24,12 @@ async def main():
     # )
 
     spacefi = SpaceFiHard(client)
-    await spacefi.swap(
-        from_token_symbol='WBTC',
-        to_token_symbol='ETH',
-        amount=0.000023,
-        slippage=5
-    )
+    # await spacefi.swap(
+    #     from_token_symbol='WBTC',
+    #     to_token_symbol='ETH',
+    #     amount=0.000023,
+    #     slippage=5
+    # )
 
 if __name__ == "__main__":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
