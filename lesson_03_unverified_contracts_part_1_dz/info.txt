@@ -1,0 +1,30 @@
+Урок 3, домашнее задание 1 - Неверифицированные контракты на примере zkSync
+
+В этом уроке мы разберёмся как работать с неверифицированными контрактами, где находить их аби и что 
+делать, если не знаем имя функции для обмена.
+
+Наши задания:
+- задание №1: сделать скрипт на следующие cвапы в сети zkSync на площадке SpaceFi (https://swap-zksync.spacefi.io/#/swap):
+swap_eth_to_usdt
+swap_eth_to_wbtc
+swap_usdc_e_to_eth
+Примеры: 
+(0.001 ETH -> 2.87 USDT): https://era.zksync.network/tx/0x358ab333050193e02623c0b81aad6acea73f358eabd35e6c7526a5e7f52b98db
+(0.0008 ETH -> 0.000029 WBTC): https://era.zksync.network/tx/0x669310c1ec16ed385e8d0778cc96c05e2bc3d8b2e6d3490f4363b370bc6d2446
+(0.001 ETH -> 2.28988 USDC): https://era.zksync.network/tx/0x5e97aaaa972dc2aca2bdb8b6241fe6dd5bb9eaeb238d0dcd941c31c46198b51e
+
+- задание №2: сделать скрипт на cвапы в сети zkSync на площадке SpaceFi (https://swap-zksync.spacefi.io/#/swap):
+swap_usdt_to_eth
+swap_usdt_to_usdc_e
+Функции должны иметь флаг is_all_balance, который будет использовать весь баланс на счету для обмена. Реализацию data
+делать через самописный ABI функции swap.
+Примеры: 
+(0.001 ETH -> 2.87 USDT): https://era.zksync.network/tx/0x0161e7cb528408427fce8eda171a251632d0b28cb89bf8dfd9616189964ae08b
+(1.734763 USDT -> 1.665372 USDC.e): https://era.zksync.network/tx/0x179df85ee97094190b17433b68c0a87f382a39188a44255917ed0afed9a386b2
+
+- задание №3*: реализовать скрипт для универсальных свапов from_token -> to_token
+
+Подсказка к заданию №2: сигнатура функции
+async def swap_usdt_to_eth(self, token_amount: TokenAmount | None = None, slippage: float = 0.5, is_all_balance: bool = False) -> str.
+Подсказка к заданию №3: сигнатура функции
+async def swap(self, from_token_symbol, to_token_symbol, amount, slippage) -> str.
