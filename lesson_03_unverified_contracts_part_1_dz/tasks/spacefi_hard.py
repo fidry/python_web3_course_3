@@ -119,7 +119,7 @@ class SpaceFiHard:
             decimals=to_token_decimals
         )
         
-        checksum_path = [
+        checksum_path = [ # list comprehension
             AsyncWeb3.to_checksum_address(path_part) 
             for path_part in SPACEFI_PATHS[(from_token_symbol, to_token_symbol)]
         ]
