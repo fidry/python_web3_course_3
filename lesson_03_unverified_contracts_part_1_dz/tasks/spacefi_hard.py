@@ -86,9 +86,6 @@ class SpaceFiHard:
             abi=ABIs.SpaceFiABI
         )
 
-        from_token_price_dollar = await self.client.get_token_price(token_symbol=from_token_symbol)
-        to_token_price_dollar = await self.client.get_token_price(token_symbol=to_token_symbol)
-
         if from_token_symbol != 'ETH':
             from_token_contract = self.client.w3.eth.contract(
                 address=AsyncWeb3.to_checksum_address(ZKSYNC_TOKENS_DICT[from_token_symbol]),
@@ -111,15 +108,20 @@ class SpaceFiHard:
             amount=amount,
             decimals=from_token_decimals
         )
+
+        from_token_price_dollar = await self.client.get_token_price(token_symbol=from_token_symbol)
+        to_token_price_dollar = await self.client.get_token_price(token_symbol=to_token_symbol)
+
         amount_out_min = TokenAmount(
-            amount=float(amount_in.Ether) 
+            amount=(float(amount_in.Ether) 
                 * from_token_price_dollar 
                 / to_token_price_dollar 
-                * (1 - slippage / 100),
+                * (100 - slippage) / 100),
             decimals=to_token_decimals
         )
-        
-        checksum_path = [ # list comprehension
+
+        # list comprehension
+        checksum_path = [
             AsyncWeb3.to_checksum_address(path_part) 
             for path_part in SPACEFI_PATHS[(from_token_symbol, to_token_symbol)]
         ]
@@ -185,6 +187,6 @@ class SpaceFiHard:
                 # Transaction success (0.0008 ETH -> 0.000029105322888639857 WBTC)!! tx_hash: 0x669310c1ec16ed385e8d0778cc96c05e2bc3d8b2e6d3490f4363b370bc6d2446
                 # Transaction success (0.00003 WBTC -> 0.0007439477656330048 ETH)!! tx_hash: 0x5879c726265b08d2c62424401ca4b03b89e4eef249f0d40983f05b3a24a872af
             except Exception as err:
-                print(f'Transaction error!! tx_hash: {tx_hash}; error: {err}')
+                print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
         else:
             print(f'Transaction error!!')

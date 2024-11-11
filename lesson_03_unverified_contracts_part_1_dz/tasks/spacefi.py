@@ -54,10 +54,10 @@ class SpaceFi:
         )
 
         amount_out_min = TokenAmount(
-            amount=float(token_amount.Ether) 
+            amount=(float(token_amount.Ether) 
                 * from_token_price_dollar 
                 / to_token_price_dollar 
-                * (100 - slippage) / 100,
+                * (100 - slippage) / 100),
             decimals=await to_token_contract.functions.decimals().call()
         )
 
@@ -79,9 +79,9 @@ class SpaceFi:
         
         if receipt['status']:
             try:
-                await self.client.verif_tx(tx_hash=tx_hash_bytes)
+                tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
                 print(f'Transaction success ({token_amount.Ether} {from_token_symbol} -> {amount_out_min.Ether} {to_token_symbol})!! '
-                    f'tx_hash: {tx_hash_bytes.hex()}')
+                    f'tx_hash: {tx_hash}')
                 # Transaction success (0.001 ETH -> 2.87 USDT)!! tx_hash: 0x358ab333050193e02623c0b81aad6acea73f358eabd35e6c7526a5e7f52b98db
             except Exception as err:
                 print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
@@ -114,14 +114,14 @@ class SpaceFi:
         to_token_price_dollar = await self.client.get_token_price(token_symbol='WBTC')
 
         amount_out_min = TokenAmount(
-            amount=float(token_amount.Ether) 
+            amount=(float(token_amount.Ether) 
                 * from_token_price_dollar 
                 / to_token_price_dollar 
-                * (100 - slippage) / 100,
+                * (100 - slippage) / 100),
             decimals=await to_token_contract.functions.decimals().call()
         )
 
-        tx_hash = await self.client.send_transaction(
+        tx_hash_bytes = await self.client.send_transaction(
             to=router_address,
             data = router_contract.encodeABI(
                 'swapExactTokensForETH',
@@ -137,14 +137,14 @@ class SpaceFi:
             max_priority_fee_per_gas=0
         )
 
-        if tx_hash:
+        if tx_hash_bytes:
             try:
-                await self.client.verif_tx(tx_hash=tx_hash)
+                tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
                 print(f'Transaction success ({token_amount.Ether} ETH -> {amount_out_min.Ether} WBTC)!! '
-                    f'tx_hash: {tx_hash.hex()}')
+                    f'tx_hash: {tx_hash}')
                 # Transaction success (0.0008 ETH -> 0.000029105322888639857 WBTC)!! tx_hash: 0x669310c1ec16ed385e8d0778cc96c05e2bc3d8b2e6d3490f4363b370bc6d2446
             except Exception as err:
-                print(f'Transaction error!! tx_hash: {tx_hash.hex()}; error: {err}')
+                print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
         else:
             print(f'Transaction error!!')
 
@@ -183,10 +183,10 @@ class SpaceFi:
         to_token_price_dollar = await self.client.get_token_price(token_symbol=to_token_symbol)
 
         amount_out_min = TokenAmount(
-            amount=float(token_amount.Ether) 
+            amount=(float(token_amount.Ether) 
                 * from_token_price_dollar 
                 / to_token_price_dollar 
-                * (100 - slippage) / 100,
+                * (100 - slippage) / 100),
             decimals=await to_token_contract.functions.decimals().call()
         )
 
@@ -236,7 +236,7 @@ class SpaceFi:
                     f'tx_hash: {tx_hash}')
                 # Transaction success (1.961663 USDC.e -> 0.0006465444482972901 WETH)!! tx_hash: 0x0161e7cb528408427fce8eda171a251632d0b28cb89bf8dfd9616189964ae08b
             except Exception as err:
-                print(f'Transaction error!! tx_hash: {tx_hash}; error: {err}')
+                print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
         else:
             print(f'Transaction error!!')
 
@@ -301,10 +301,10 @@ class SpaceFi:
         )
 
         amount_out_min = TokenAmount(
-            amount=float(token_amount.Ether) 
+            amount=(float(token_amount.Ether) 
                 * from_token_price_dollar 
                 / to_token_price_dollar 
-                * (100 - slippage) / 100,
+                * (100 - slippage) / 100),
             decimals=await to_token_contract.functions.decimals().call()
         )
 
@@ -352,7 +352,7 @@ class SpaceFi:
                     f'tx_hash: {tx_hash}')
                 # Transaction success (0.0004 ETH -> 1.13988 USDT)!! tx_hash: 0x16ed6ce885e1f65a4a068b5e9253a5ebe2251ae93ed878ab583830515c627fb0
             except Exception as err:
-                print(f'Transaction error!! tx_hash: {tx_hash}; error: {err}')
+                print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
         else:
             print(f'Transaction error!!')
     
@@ -406,10 +406,10 @@ class SpaceFi:
         )
 
         amount_out_min = TokenAmount(
-            amount=float(token_amount.Ether) 
+            amount=(float(token_amount.Ether) 
                 * from_token_price_dollar 
                 / to_token_price_dollar 
-                * (100 - slippage) / 100,
+                * (100 - slippage) / 100),
             decimals=await to_token_contract.functions.decimals().call()
         )
 
@@ -462,6 +462,6 @@ class SpaceFi:
                     f'tx_hash: {tx_hash}')
                 # Transaction success (2.027439 USDT -> 1.946341 USDC.e)!! tx_hash: 0xbd678a795c66238f067a0df7f49c759d7e3bc422a60c8fd7baadd1532566c98c
             except Exception as err:
-                print(f'Transaction error!! tx_hash: {tx_hash}; error: {err}')
+                print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
         else:
             print(f'Transaction error!!')

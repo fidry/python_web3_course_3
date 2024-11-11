@@ -1,0 +1,26 @@
+Урок 3, домашнее задание 2 - Неверифицированные контракты на примере zkSync (part 2)
+
+В этом уроке мы разберёмся как работать с неверифицированными контрактами, поработаем с площадкой Koi Finance, SyncSwap и Maverick.
+
+Наши задания:
+- задание №1: сделать скрипт на следующие cвапы в сети zkSync на площадке Maverick (https://app.mav.xyz/?chain=324):
+swap_eth_to_busd
+swap_usdc_to_eth
+swap_busd_to_eth
+
+
+- задание №2: сделать скрипт на cвапы в сети zkSync на площадке KoiFinance (https://dapp.koi.finance/swap):
+swap_usdt_to_eth
+swap_usdt_to_usdc_e
+Функции должны иметь флаг is_all_balance, который будет использовать весь баланс на счету для обмена. Реализацию data
+делать через самописный ABI функции swap.
+Примеры: 
+(2.83 USDT -> 0.00092 ETH): https://explorer.zksync.io/tx/0x226e9a7c741618f3e867b8f156fae43d0c4dd4bf773fc00c17e24c7e61d4696b
+(1.734763 USDT -> 1.665372 USDC.e): https://explorer.zksync.io/tx/0x179df85ee97094190b17433b68c0a87f382a39188a44255917ed0afed9a386b2
+
+- задание №3*: реализовать скрипт для универсальных свапов from_token -> to_token
+
+Подсказка к заданию №2: сигнатура функции
+async def swap_usdt_to_eth(self, token_amount: TokenAmount | None = None, slippage: float = 0.5, is_all_balance: bool = False) -> str.
+Подсказка к заданию №3: сигнатура функции
+async def swap(self, from_token_symbol, to_token_symbol, amount, slippage) -> str.
