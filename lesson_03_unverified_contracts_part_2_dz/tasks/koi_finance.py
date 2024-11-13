@@ -3,10 +3,9 @@ import random
 import time
 
 from web3 import AsyncWeb3
-from uniswap_universal_router_decoder import RouterCodec, FunctionRecipient
 
 from client import Client
-from data.models import ABIs, Permit2ABI, TokenAmount, Tokens
+from data.models import ABIs, TokenAmount, Tokens
 from utils import TxUtils
 
 
@@ -134,3 +133,4 @@ class KoiFinance:
                     f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
         else:
             print(f'Transaction error!!')
+    
