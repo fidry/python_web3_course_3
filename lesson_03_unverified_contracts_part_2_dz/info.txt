@@ -3,24 +3,34 @@
 В этом уроке мы разберёмся как работать с неверифицированными контрактами, поработаем с площадкой Koi Finance, SyncSwap и Maverick.
 
 Наши задания:
-- задание №1: сделать скрипт на следующие cвапы в сети zkSync на площадке Maverick (https://app.mav.xyz/?chain=324):
-swap_eth_to_busd
+- задание №1**: сделать скрипт на следующие cвапы в сети zkSync на площадке KoiFinance (https://dapp.koi.finance/swap):
+swap_eth_to_usdc (отличается от той, что в видеоуроке)
+Пример:
+(0.001 ETH -> 3.113 USDC): https://era.zksync.network/tx/0x293462efd1b0ca29fc731e84d868eb0589506b1b4c332b374b5bb9ca5e2a0c81
+
+- задание №2**: сделать скрипт на cвапы в сети zkSync на площадке Maverick (https://app.mav.xyz/?chain=324):
 swap_usdc_to_eth
-swap_busd_to_eth
-
-
-- задание №2: сделать скрипт на cвапы в сети zkSync на площадке KoiFinance (https://dapp.koi.finance/swap):
-swap_usdt_to_eth
-swap_usdt_to_usdc_e
-Функции должны иметь флаг is_all_balance, который будет использовать весь баланс на счету для обмена. Реализацию data
-делать через самописный ABI функции swap.
+swap_usdc_to_mav
+Функции должны иметь флаг is_all_balance, который будет использовать весь баланс на счету для обмена. 
 Примеры: 
-(2.83 USDT -> 0.00092 ETH): https://explorer.zksync.io/tx/0x226e9a7c741618f3e867b8f156fae43d0c4dd4bf773fc00c17e24c7e61d4696b
-(1.734763 USDT -> 1.665372 USDC.e): https://explorer.zksync.io/tx/0x179df85ee97094190b17433b68c0a87f382a39188a44255917ed0afed9a386b2
+(6.68 USDC -> 0.00212 ETH): https://explorer.zksync.io/tx/0x802636e2f48fecc239882252b5437fe1e62cd1c0044b3ef3c30e172a91e99f81
+(4.5 USDC -> 28.48 MAV): https://explorer.zksync.io/tx/0x5dc17f0cfd6dda8a1522963e2f9ea0537060ba7a03535d40771eea12559586e1
 
-- задание №3*: реализовать скрипт для универсальных свапов from_token -> to_token
+- задание №3**: сделать скрипт на cвапы в сети zkSync на площадке SyncSwap (https://syncswap.xyz/):
+swap_usdc_to_eth
+Функции должны иметь флаг is_all_balance, который будет использовать весь баланс на счету для обмена.
+Примеры:
+(1.600079 USDC.e -> 0.000492 ETH): https://explorer.zksync.io/tx/0x37287fa8108c897938d89f4a40755fb8840d3c502ed13627c007d564f9edf624
 
-Подсказка к заданию №2: сигнатура функции
-async def swap_usdt_to_eth(self, token_amount: TokenAmount | None = None, slippage: float = 0.5, is_all_balance: bool = False) -> str.
-Подсказка к заданию №3: сигнатура функции
-async def swap(self, from_token_symbol, to_token_symbol, amount, slippage) -> str.
+Внимание!
+Все транзакции тестировать на малых суммах, потому что при неправильно составленном пути может быть потеряна часть токенов.
+Как, например, в этом случае: https://era.zksync.network/tx/0x412d7c487570013a8f5e2b4f2a8ffb939ba049b5ef5e8dfde412899d7353ad35
+(я просто отправил 3 бакса на контракт :))
+
+
+Подсказка к заданиям: 
+сделать функцию для парсинга данных из tx, чтобы автоматически за вас разбивал строку на 64 символа и выводил красиво в консоль. 
+Желательно сбоку добавить hex-нумерацию по типу:
+000: 000000000000000000000000...00000000000020
+020: 000000000000000000000000...00000000000002
+сигнатура функций как обычно: async def swap_eth_to_usdc(self, token_amount, slippage, is_all_balance(?))
