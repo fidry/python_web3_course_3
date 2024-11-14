@@ -1,2 +1,2 @@
-PRIVATE_KEY = '...'
-PROXY = '...'
+PRIVATE_KEY = ''
+PROXY = ''
