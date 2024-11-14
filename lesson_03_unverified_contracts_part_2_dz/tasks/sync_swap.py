@@ -87,7 +87,7 @@ class SyncSwap:
         token_amount: TokenAmount | None = None,
         slippage: float = 0.5,
         is_all_balance: bool = False,
-    ) -> str:
+    ):
         """
         Function signature: 0xd7570e45 - function selector/method ID
         000: 0000000000000000000000000000000000000000000000000000000000000060 - ссылка на следующую строку (000 + 60 = 060)

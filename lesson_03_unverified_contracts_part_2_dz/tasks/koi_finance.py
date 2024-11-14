@@ -13,15 +13,6 @@ class KoiFinance:
     def __init__(self, client: Client):
         self.client = client
 
-    async def get_raw_tx_params(self, wei_value: float = 0) -> dict:
-        return {
-            "chainId": await self.client.w3.eth.chain_id,
-            "from": self.client.account.address,
-            "value": wei_value,
-            "gasPrice": await self.client.w3.eth.gas_price,
-            "nonce": await self.client.w3.eth.get_transaction_count(self.client.account.address),
-        }
-
     async def swap_eth_to_usdc(
         self,
         token_amount: TokenAmount,
