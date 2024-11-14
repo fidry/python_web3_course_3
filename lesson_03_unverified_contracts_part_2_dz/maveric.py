@@ -49,7 +49,7 @@ async def main(from_token_amount: TokenAmount, slippage: float = 5):
     router_address = AsyncWeb3.to_checksum_address('0x39E098A153Ad69834a9Dac32f0FCa92066aD03f4')
     router_contract = client.w3.eth.contract(
         address=router_address,
-        abi=ABIs.MavericABI
+        abi=ABIs.MaverickABI
     )
 
     from_token_price_dollar = await client.get_token_price(token_symbol=from_token_symbol)

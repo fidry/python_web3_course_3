@@ -2,6 +2,8 @@ from decimal import Decimal
 
 from web3 import AsyncWeb3
 
+from utils import get_json
+
 
 class TokenAmount:
     Wei: int
@@ -29,11 +31,16 @@ class Tokens:
     USDC_E = AsyncWeb3.to_checksum_address('0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4')
     USDT = AsyncWeb3.to_checksum_address('0x493257fd37edb34451f62edf8d2a0c418852ba4c')
     STAR = AsyncWeb3.to_checksum_address('0x838A66F841DD5148475a8918db0732c239499a03')
+    WBTC = AsyncWeb3.to_checksum_address('0xbbeb516fb02a01611cbbe0453fe3c580d7281011')
+    MAV = AsyncWeb3.to_checksum_address('0x787c09494ec8bcb24dcaf8659e7d5d69979ee508')
     ETH = AsyncWeb3.to_checksum_address(f'0x{"".zfill(40)}')
 
     USDC_E_ZK_LP = AsyncWeb3.to_checksum_address('0x40b768de8b2e4ed83d982804cb2fcc53d2529be9')
     ZK_WETH_LP = AsyncWeb3.to_checksum_address('0x1a32a715b4ebef211bbf4baa414f563b25cc50c9')
     ZK = AsyncWeb3.to_checksum_address('0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e')
+    USDC_E_USDT_LP = AsyncWeb3.to_checksum_address('0xa65349507212f9d1df0b001e221ceb78ff23b155')
+    USDT_WBTC_LP = AsyncWeb3.to_checksum_address('0xc029c9569c51d24af555106951078b5b4e11894a')
+    WETH_WBTC_LP = AsyncWeb3.to_checksum_address('0xb3479139e07568ba954c8a14d5a8b3466e35533d')
     ZERO = AsyncWeb3.to_checksum_address('0x0000000000000000000000000000000000000000')
 
 
@@ -202,7 +209,7 @@ class ABIs:
         }
     ]
 
-    MavericABI = [
+    MaverickABI = [
         {
             "constant": False,
             "inputs": [
@@ -248,6 +255,16 @@ class ABIs:
         },
         {
             "inputs": [
+                {"name": "amountOutMin", "type": "uint256"},
+                {"name": "address", "type": "address"}
+            ],
+            "name": "unwrapWETH9",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [
                 {
                     "name": "data",
                     "type": "bytes[]"
@@ -260,71 +277,5 @@ class ABIs:
         }
     ]
 
-    SyncSwapABI = [
-        {
-            "inputs": [
-                {
-                    "components": [
-                        {
-                            "components": [
-                                {
-                                    "internalType": "address",
-                                    "name": "pool",
-                                    "type": "address"
-                                },
-                                {
-                                    "internalType": "bytes",
-                                    "name": "data",
-                                    "type": "bytes"
-                                },
-                                {
-                                    "internalType": "address",
-                                    "name": "callback",
-                                    "type": "address"
-                                },
-                                {
-                                    "internalType": "bytes",
-                                    "name": "callbackData",
-                                    "type": "bytes"
-                                },
-                                {
-                                    "name": "flag",
-                                    "type": "bool"
-                                }
-                            ],
-                            "internalType": "struct IRouter.SwapStep[]",
-                            "name": "steps",
-                            "type": "tuple[]"
-                        },
-                        {
-                            "internalType": "address",
-                            "name": "tokenIn",
-                            "type": "address"
-                        },
-                        {
-                            "internalType": "uint256",
-                            "name": "amountIn",
-                            "type": "uint256"
-                        }
-                    ],
-                    "internalType": "struct IRouter.SwapPath[]",
-                    "name": "paths",
-                    "type": "tuple[]"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "amountOutMin",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "deadline",
-                    "type": "uint256"
-                }
-            ],
-            "name": "swap",
-            "outputs": [],
-            "stateMutability": "payable",
-            "type": "function"
-        },
-    ]
+SyncSwapFullAbi = get_json('data/abis/syncswap_abi.json')
+PermitTokenABI = get_json('data/abis/permit_token_abi.json')
