@@ -127,10 +127,8 @@ class KoiFinance:
                 tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
                 print(f'Transaction success ({token_amount.Ether} ETH -> {amount_out_min.Ether} {to_token_symbol})!! '
                       f'tx_hash: {tx_hash}')
-                # Transaction success (0.001 ETH -> 2.28988 USDC)!! tx_hash: 0x5e97aaaa972dc2aca2bdb8b6241fe6dd5bb9eaeb238d0dcd941c31c46198b51e
             except Exception as err:
-                print(
-                    f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
+                print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
         else:
             print(f'Transaction error!!')
     

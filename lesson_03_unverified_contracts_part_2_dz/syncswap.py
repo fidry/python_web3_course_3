@@ -5,7 +5,7 @@ from web3 import AsyncWeb3
 
 import config
 from client import Client
-from data.models import ABIs, TokenAmount, Tokens, TxArgs
+from data.models import ABIs, SyncSwapFullAbi, TokenAmount, Tokens, TxArgs
 
 
 async def main(from_token_amount: TokenAmount, slippage: float = 5):
@@ -33,7 +33,7 @@ async def main(from_token_amount: TokenAmount, slippage: float = 5):
     router_address = AsyncWeb3.to_checksum_address('0x9B5def958d0f3b6955cBEa4D5B7809b2fb26b059')
     router_contract = client.w3.eth.contract(
         address=router_address,
-        abi=ABIs.SyncSwapABI
+        abi=SyncSwapFullAbi
     )
 
     from_token_price_dollar = await client.get_token_price(token_symbol=from_token_symbol)
