@@ -15,7 +15,7 @@ class Profiles(Base):
             username: str | None = None,
             password: str | None = None,
             fakey: str | None = None,
-            cookie: list[dict[str, str]] | None = None,
+            cookie: str | None = None,
             ignore_cookie_error: str = '0',
             ip: str | None = None,
             country: str | None = None,
