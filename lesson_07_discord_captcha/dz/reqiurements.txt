@@ -1,0 +1,7 @@
+anticaptchaofficial==1.0.61
+anycaptcha==1.5.1
+asyncio==3.4.3
+fake-useragent==1.5.1
+loguru==0.7.2
+playwright==1.48.0
+requests==2.32.3
