@@ -1,0 +1,4 @@
+anticaptchaofficial==1.0.61
+asyncio==3.4.3
+fake-useragent==1.5.1
+playwright==1.48.0
