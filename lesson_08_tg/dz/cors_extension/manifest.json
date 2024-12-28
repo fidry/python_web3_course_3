@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Frame unlocker",
+  "version": "1.0",
+  "permissions": [
+    "declarativeNetRequest",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://telegram.blum.codes/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "description": "Обходит CORS защиту в фреймах."
+}
