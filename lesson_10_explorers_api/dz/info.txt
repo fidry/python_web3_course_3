@@ -1,0 +1,18 @@
+) Расширьте библиотеку evm_explorers.explorer_api 3-мя новыми методами:
+- 1 метод для модуля account
+- 1 метод для модуля contract
+- 1 метод для модуля transaction (нужно новый класс создать)
+
+) Расширьте библиотеку oklink.sol_data любыми 3-мя метода из раздела AccountData
+(https://www.oklink.com/docs/en/#sol-data-account-data)
+
+) По аналогии метода oklink.fundamental_blockchain_data.Address.txlist_all()
+написать метод txlist_all() для внутреннего API zksync експлорера
+
+) Написать функцию, которая будет фильтровать транзакции с кошелька по сигнатуре вызванной функции.
+Сигнатура функции:
+async def find_txs(address: str, signature: str):
+    ...
+
+) С помощью написанной функции find_txs() посчитать сколько раз вызывалась функция смарт контракта
+с сигнатурой "0x7ff36ab5" с кошелька "0x36F302d18DcedE1AB1174f47726E62212d1CcEAD" в сети zksync
