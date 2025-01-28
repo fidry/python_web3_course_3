@@ -46,6 +46,7 @@ async def main():
     # res = await api_oklink.address.find_txs(
     #     address='0x36F302d18DcedE1AB1174f47726E62212d1CcEAD',
     #     signature='0x7ff36ab5',
+    #     to='0xbe7d1fd1f6748bbdefc4fbacafbb11c6fc506d1d',
     #     chain='zksync'
     # )
     # for i in res:

@@ -147,12 +147,22 @@ class Address(Module):
             txs_lst += txs
         return txs_lst
 
-    async def find_txs(self, address: str, signature: str, chain: str | None = 'eth'):
-        txs = await self.txlist_all(address=address, chain=chain)
+    async def find_txs(
+            self,
+            address: str,
+            signature: str,
+            to: str | None = None,
+            chain: str = 'eth',
+            txs_lst: list[dict] | None = None
+    ):
+        if not txs_lst:
+            txs_lst = await self.txlist_all(address=address, chain=chain)
 
         required_transactions = []
-        for tx in txs:
+        for tx in txs_lst:
             if tx['methodId'] == signature:
+                if to and to != tx['to']:
+                    continue
                 required_transactions.append(tx)
 
         return required_transactions
