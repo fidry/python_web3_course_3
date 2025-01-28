@@ -161,7 +161,7 @@ class Address(Module):
         required_transactions = []
         for tx in txs_lst:
             if tx['methodId'] == signature:
-                if to and to != tx['to']:
+                if to and to.upper() != tx.get('to', '').upper():
                     continue
                 required_transactions.append(tx)
 
