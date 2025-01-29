@@ -21,16 +21,6 @@ async def start_script():
     await asyncio.wait([asyncio.create_task(initial()), asyncio.create_task(activity())])
 
 
-# # todo: перенести в SRA
-# async def start_okx_withdraw():
-#     settings = Settings()
-#     if not settings.okx.credentials.completely_filled():
-#         logger.error('OKX credentials not filled')
-#         return
-#     wallets: list[Wallet] = get_wallets()
-#     await okx_withdraw(wallets=wallets)
-
-
 if __name__ == '__main__':
     create_files()
     print('''  Select the action:

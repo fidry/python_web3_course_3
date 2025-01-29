@@ -1,7 +1,3 @@
-import asyncio
-
-import aiohttp
-
 from client import Client
 from data.models import TokenAmount
 from utils.utils import randfloat

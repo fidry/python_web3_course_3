@@ -1,14 +1,8 @@
-import random
-import asyncio
-
 from loguru import logger
 from eth_typing import ChecksumAddress
 
 from utils.utils import randfloat
-from py_okx_async.models import Chains
 from okx.okx_actions import OKXActions
-from client import Client
-
 from data.models import Settings, TokenAmount
 
 
@@ -19,6 +13,9 @@ async def okx_withdraw_evm(
         amount_to_withdraw: TokenAmount | None = None,
 ) -> str:
     settings = Settings()
+
+    if not settings.okx.credentials.completely_filled():
+        return 'Failed to withdraw from OKX (OKX credentials not filled)'
 
     if not amount_to_withdraw:
         amount_to_withdraw = TokenAmount(

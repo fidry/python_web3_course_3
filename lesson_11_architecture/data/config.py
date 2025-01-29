@@ -3,10 +3,6 @@ import sys
 from pathlib import Path
 
 from loguru import logger
-from dotenv import load_dotenv
-
-
-load_dotenv()
 
 
 if getattr(sys, 'frozen', False):
@@ -25,8 +21,6 @@ IMPORT_FILE = os.path.join(FILES_DIR, 'import.csv')
 SETTINGS_FILE = os.path.join(FILES_DIR, 'settings.json')
 
 WALLETS_DB = os.path.join(FILES_DIR, 'wallets.db')
-
-# DELAY_IN_CASE_OF_ERROR = 3600
 
 logger.add(ERRORS_FILE, level='ERROR')
 logger.add(LOG_FILE, level='INFO')

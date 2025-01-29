@@ -27,7 +27,7 @@ class Controller(Base):
         result_count += len(await api_oklink.address.find_txs(
             address=self.client.account.address,
             signature='...',
-            to=Contracts.MAVERICK.address,
+            to=...,  # Contracts...
             chain=chain,
             txs_lst=txs_lst
         ))
@@ -36,7 +36,7 @@ class Controller(Base):
         result_count += len(await api_oklink.address.find_txs(
             address=self.client.account.address,
             signature='...',
-            to=Contracts.MUTE.address,
+            to=...,  # Contracts...
             chain=chain,
             txs_lst=txs_lst
         ))
@@ -62,7 +62,7 @@ class Controller(Base):
         result_count += len(await api_oklink.address.find_txs(
             address=self.client.account.address,
             signature='...',
-            to=...,
+            to=...,  # Contracts...
             chain=chain,
             txs_lst=txs_lst
         ))

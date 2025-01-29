@@ -6,7 +6,6 @@ from loguru import logger
 from oklink.fundamental_blockchain_data import APIFunctions
 from okx.withdrawal import okx_withdraw_evm
 
-from okx.okx_actions import OKXActions
 from py_okx_async.models import Chains
 from tasks.controller import Controller
 from data.models import Settings, Contracts
