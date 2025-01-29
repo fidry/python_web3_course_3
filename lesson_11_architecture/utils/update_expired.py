@@ -59,15 +59,15 @@ def update_expired(initial: bool = False) -> None:
     db.commit()
 
 
-# def update_next_action_time(private_key: str, seconds: int, initial: bool = False) -> bool:
-#     try:
-#         now = datetime.now()
-#         wallet = get_wallet(private_key=private_key)
-#         if initial:
-#             wallet.next_initial_action_time = now + timedelta(seconds=seconds)
-#         else:
-#             wallet.next_activity_action_time = now + timedelta(seconds=seconds)
-#         db.commit()
-#         return True
-#     except BaseException:
-#         return False
+def update_next_action_time(private_key: str, seconds: int, initial: bool = False) -> bool:
+    try:
+        now = datetime.now()
+        wallet = get_wallet(private_key=private_key)
+        if initial:
+            wallet.next_initial_action_time = now + timedelta(seconds=seconds)
+        else:
+            wallet.next_activity_action_time = now + timedelta(seconds=seconds)
+        db.commit()
+        return True
+    except BaseException:
+        return False

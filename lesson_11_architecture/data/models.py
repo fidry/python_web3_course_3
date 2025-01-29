@@ -60,6 +60,7 @@ class Settings:
     def __init__(self):
         json_data = read_json(path=SETTINGS_FILE)
 
+        self.delay_in_case_of_error: int = json_data['delay_in_case_of_error']
         self.rpc_eth: str = json_data['rpc_eth']
         self.rpc_zksync: str = json_data['rpc_zksync']
         self.maximum_gas_price: int = json_data['maximum_gas_price']

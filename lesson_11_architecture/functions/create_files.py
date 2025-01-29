@@ -24,6 +24,7 @@ def create_files():
         current_settings = {}
 
     settings = {
+        'delay_in_case_of_error': 3600,
         'rpc_eth': 'https://rpc.ankr.com/eth',
         'rpc_zksync': 'https://mainnet.era.zksync.io',
         'maximum_gas_price': 40,

@@ -1,16 +1,12 @@
 import random
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime
 
-from web3 import Web3
 from loguru import logger
 from sqlalchemy import select, func
 
 from client import Client
-from libs.eth_async.data.models import Networks
-
 from data.models import Settings
-from data import config
 from utils.db_api.wallet_api import db
 from utils.db_api.models import Wallet
 from tasks.controller import Controller
@@ -41,14 +37,14 @@ async def initial():
             await eth_client.wait_for_acceptable_gas(acceptable_gas_price_gwei=settings.maximum_gas_price, sleep=60)
 
             zksync_client = Client(rpc=settings.rpc_zksync, private_key=wallet.private_key, proxy=wallet.proxy)
-
             controller = Controller(client=zksync_client)
 
             action = await select_random_action(controller=controller, wallet=wallet, initial=True)
 
             if not action:
                 logger.error(f'{wallet.address} | select_random_action | can not choose the action')
-                update_next_action_time(private_key=wallet.private_key, seconds=DELAY_IN_CASE_OF_ERROR, initial=True)
+                update_next_action_time(
+                    private_key=wallet.private_key, seconds=settings.delay_in_case_of_error, initial=True)
                 continue
 
             if action == 'Processed':
@@ -67,8 +63,8 @@ async def initial():
 
             if action == 'Insufficient balance':
                 logger.error(f'{wallet.address}: Insufficient balance')
-                # todo: надо ли в случае недостатка баланса делать задержку?
-                update_next_action_time(private_key=wallet.private_key, seconds=DELAY_IN_CASE_OF_ERROR, initial=True)
+                update_next_action_time(
+                    private_key=wallet.private_key, seconds=settings.delay_in_case_of_error, initial=True)
                 continue
 
             status = await action()
@@ -90,7 +86,8 @@ async def initial():
                 await asyncio.sleep(delay)
 
             else:
-                update_next_action_time(private_key=wallet.private_key, seconds=DELAY_IN_CASE_OF_ERROR, initial=True)
+                update_next_action_time(
+                    private_key=wallet.private_key, seconds=settings.delay_in_case_of_error, initial=True)
                 logger.error(f'{wallet.address}: {status}')
 
         except BaseException as e:
