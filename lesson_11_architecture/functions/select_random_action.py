@@ -44,7 +44,7 @@ async def select_random_action(controller: Controller, wallet: Wallet, initial: 
         if swaps >= wallet.number_of_swaps and mints_nft >= wallet.number_of_mint_nft:
             return 'Processed'
 
-#     sufficient_balance = float(eth_balance.Ether) > settings.minimal_balance + settings.eth_amount_for_swap.to_
+    sufficient_balance = float(eth_balance.Ether) > settings.minimal_balance + settings.eth_amount_for_swap.to_
 #     usdc_balance = await controller.client.wallet.balance(token=Contracts.USDC)
 #     busd_balance = await controller.client.wallet.balance(token=Contracts.ceBUSD)
 #     usdt_balance = await controller.client.wallet.balance(token=Contracts.USDT)
@@ -101,35 +101,26 @@ async def select_random_action(controller: Controller, wallet: Wallet, initial: 
 #                 1,
 #             ]
 #
-#         if sufficient_balance:
-#             possible_actions += [
-#                 controller.maverick.swap_eth_to_usdc,
-#                 controller.maverick.swap_eth_to_busd,
-#                 controller.mute.swap_eth_to_usdc,
-#                 controller.mute.swap_eth_to_wbtc,
-#                 controller.space_fi.swap_eth_to_usdc,
-#                 controller.space_fi.swap_eth_to_usdt,
-#                 controller.space_fi.swap_eth_to_busd,
-#                 controller.space_fi.swap_eth_to_wbtc,
-#                 controller.syncswap.swap_eth_to_usdc,
-#                 controller.syncswap.swap_eth_to_usdt,
-#                 controller.syncswap.swap_eth_to_busd,
-#                 controller.syncswap.swap_eth_to_wbtc,
-#             ]
-#             weights += [
-#                 1,
-#                 1,
-#                 1,
-#                 1,
-#                 1,
-#                 1,
-#                 1,
-#                 1,
-#                 1,
-#                 1,
-#                 1,
-#                 1,
-#             ]
+    if sufficient_balance:
+        possible_actions += [
+            controller.space_fi.swap_eth_to_usdt,
+            controller.space_fi.swap_eth_to_wbtc,
+            controller.space_fi.swap_usdc_e_to_eth,
+            controller.space_fi.swap_usdt_to_eth,
+            controller.space_fi.swap_usdt_to_usdc_e,
+            controller.koi_finance.swap_eth_to_usdc,
+            controller.syncswap.swap_usdc_e_to_eth,
+            controller.whale_nft.mint,
+        ]
+        weights += [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+        ]
 #
 #     if dmail < wallet.number_of_dmail:
 #         if float(eth_balance.Ether) > settings.minimal_balance:

@@ -22,6 +22,11 @@ SETTINGS_FILE = os.path.join(FILES_DIR, 'settings.json')
 
 WALLETS_DB = os.path.join(FILES_DIR, 'wallets.db')
 
+# Abis
+SPACE_FI_ROUTER_ABI = os.path.join(ABIS_DIR, 'space_fi', 'router_abi.json')
+KOI_FINANCE_ROUTER_ABI = os.path.join(ABIS_DIR, 'koi_finance', 'router_abi.json')
+SYNCSWAP_ROUTER_ABI = os.path.join(ABIS_DIR, 'syncswap', 'router_abi.json')
+
 logger.add(ERRORS_FILE, level='ERROR')
 logger.add(LOG_FILE, level='INFO')
 

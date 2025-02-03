@@ -8,6 +8,25 @@ from data.models import Settings
 class Base:
     def __init__(self, client: Client):
         self.client = client
+        
+    @staticmethod
+    def to_cut_hex_prefix_and_zfill(data: int | str, length: int = 64):
+        str_hex_data = str(data)
+        """
+        Convert the hex string to lowercase, remove the '0x' prefix, and fill it with zeros to the specified length.
+
+        Args:
+            hex_data (str): The original hex string.
+            length (int): The desired length of the string after filling. The default is 64.
+
+        Returns:
+            str: The modified string with '0x' prefix removed and zero-filled to the specified length.
+        """
+        if str_hex_data.startswith('0x'):
+            str_hex_data = str_hex_data[2:]
+
+        return str_hex_data.zfill(length)
+    
 
     # async def approve_interface(self, token_address, spender, amount: TokenAmount | None = None) -> bool:
     #     balance = await self.client.balance(token_address=token_address)
