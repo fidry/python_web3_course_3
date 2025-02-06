@@ -61,3 +61,18 @@ async def txlist_all(address: str) -> list[dict]:
         txs_lst += txs
 
     return txs_lst
+
+
+async def main():
+    # res = await txlist(address='0x36F302d18DcedE1AB1174f47726E62212d1CcEAD', limit=100)
+    # print(res)
+    # print(len(res))
+    res = await txlist_all(address='0x36F302d18DcedE1AB1174f47726E62212d1CcEAD')
+    print(res)
+    print(len(res))
+
+
+if __name__ == '__main__':
+    import asyncio
+
+    asyncio.run(main())

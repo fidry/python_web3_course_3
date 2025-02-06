@@ -6,19 +6,19 @@ from oklink import config
 
 
 async def main():
-    # api_oklink = APIFunctions(url='https://www.oklink.com', key=config.OKLINK_API_KEY)
+    api_oklink = APIFunctions(url='https://www.oklink.com', key=config.OKLINK_API_KEY)
 
-    # print(await api_oklink.fundamental_data.summary('sui'))
+    # print(await api_oklink.fundamental_data.summary('eth'))
     # print(await api_oklink.fundamental_data.info())
-    # print(await api_oklink.fundamental_data.fee('eth'))
+    # print(await api_oklink.fundamental_data.fee('arbitrum'))
 
-    # print(await api_oklink.address.address_details(address='0x32400084C286CF3E17e7B677ea9583e60a000324'))
+    # print(await api_oklink.address.address_details(address='0x32400084C286CF3E17e7B677ea9583e60a000324', chain='arbitrum'))
 
     # print(await api_oklink.address.token_balance(
     #     address='0x32400084C286CF3E17e7B677ea9583e60a000324',
-    #     protocol_type='token_20',
+    #     protocol_type='token_1155',
     # ))
-    #
+
     # print()
     # print(await api_oklink.address.token_balance(
     #     address='0x32400084C286CF3E17e7B677ea9583e60a000324',
@@ -32,13 +32,15 @@ async def main():
     # ))
 
     # res = await api_oklink.address.txlist(
-    #     address='0x32400084C286CF3E17e7B677ea9583e60a000324'
+    #     address='0x36F302d18DcedE1AB1174f47726E62212d1CcEAD',
+    #     chain='arbitrum'
     # )
     # print(res)
     # print(len(res))
 
     # res = await api_oklink.address.txlist_all(
-    #     address='0x32400084C286CF3E17e7B677ea9583e60a000324'
+    #     address='0x36F302d18DcedE1AB1174f47726E62212d1CcEAD',
+    #     chain='arbitrum'
     # )
     # print(res)
     # print(len(res))

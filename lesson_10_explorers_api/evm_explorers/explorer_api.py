@@ -37,7 +37,7 @@ class Account(Module):
         }
         return await async_get(self.url, params=aiohttp_params(params), headers=self.headers)
 
-    async def balancemulti(self, address: list[str], tag: Literal['latest', 'earliest', 'pending'] = Tag.Latest):
+    async def balancemulti(self, addresses: list[str], tag: Literal['latest', 'earliest', 'pending'] = Tag.Latest):
         action = 'balancemulti'
 
         if tag not in (Tag.Latest, Tag.Earliest, Tag.Pending):
@@ -46,7 +46,7 @@ class Account(Module):
         params = {
             'module': self.module,
             'action': action,
-            'address': address,
+            'address': addresses,
             'tag': tag,
             'apikey': self.key,
         }

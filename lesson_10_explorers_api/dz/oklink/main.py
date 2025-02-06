@@ -38,23 +38,24 @@ async def main():
     # print(len(res))
 
     # res = await api_oklink.address.txlist_all(
-    #     address='0x32400084C286CF3E17e7B677ea9583e60a000324'
-    # )
-    # print(res)
-    # print(len(res))
-
-    # res = await api_oklink.address.find_txs(
     #     address='0x36F302d18DcedE1AB1174f47726E62212d1CcEAD',
-    #     signature='0x7ff36ab5',
-    #     to='0xbe7d1fd1f6748bbdefc4fbacafbb11c6fc506d1d',
     #     chain='zksync'
     # )
     # for i in res:
     #     print(i)
-    # print(len(res))
+
+    res = await api_oklink.address.find_txs(
+        address='0x36F302d18DcedE1AB1174f47726E62212d1CcEAD',
+        signature='0x7ff36ab5',
+        # to='0xbe7d1fd1f6748bbdefc4fbacafbb11c6fc506d1d',
+        chain='zksync'
+    )
+    for i in res:
+        print(i)
+    print(len(res))
 
     # ------------------------------------- solana -------------------------------------
-    # api_oklink = APIFunctionsSolana(url='https://www.oklink.com', key=config.OKLINK_API_KEY)
+    api_oklink = APIFunctionsSolana(url='https://www.oklink.com', key=config.OKLINK_API_KEY)
 
     # print(await api_oklink.chain_info.info())
     # print(await api_oklink.block_data.block_list())
@@ -68,7 +69,7 @@ async def main():
 
     # print(await api_oklink.account_data.balance_list(
     #     address='A4zodtkK7whbQHfTSmJdRnHVhq9WHgZr7WbC4EPLcJQ7',
-    #     protocol_type='nft'
+    #     protocol_type='token'
     # ))
 
     # print(await api_oklink.account_data.account_type(

@@ -5,15 +5,16 @@ from evm_explorers import config
 
 
 async def main():
-    api = APIFunctions(key=config.ETHEREUM_API_KEY, url='https://api.etherscan.io/api')
+    # api = APIFunctions(key=config.ETHEREUM_API_KEY, url='https://api.etherscan.io/api')
+    api = APIFunctions(key=config.ETHEREUM_API_KEY, url='https://api.etherscan.io/v2/api?chainid=8453')
 
-    # print(
-    #     int((await api.account.balance(address='0x36F302d18DcedE1AB1174f47726E62212d1CcEAD'))['result']) / 10 ** 18
-    # )
+    print(
+        int((await api.account.balance(address='0x36F302d18DcedE1AB1174f47726E62212d1CcEAD'))['result']) / 10 ** 18
+    )
 
     # addresses = ['0x36F302d18DcedE1AB1174f47726E62212d1CcEAD', '0xDAFEA492D9c6733ae3d56b7Ed1ADB60692c98Bc5']
     # print(
-    #     await api.account.balancemulti(address=addresses)
+    #     await api.account.balancemulti(addresses=addresses)
     # )
 
     # print(
