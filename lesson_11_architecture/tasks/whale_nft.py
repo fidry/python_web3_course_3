@@ -2,15 +2,15 @@ from web3 import AsyncWeb3
 from web3.contract.async_contract import AsyncContract
 
 from client import Client
-from utils.files_utils import read_json
+from data.models import Contracts
 
 
 class WhaleNft:
     MINT_ABI_PATH = ('data', 'abis', 'whale-app', 'mint_abi.json')
     MINT_ADDRESS_DICT = {
-        'Polygon': '0xE1c907503B8d1545AFD5A89cc44FC1E538A132DA',
-        'Arbitrum One': '0x26E9934024cdC7fcc9f390973d4D9ac1FA954a37',
-        'zkSync Era': '0xF09A71F6CC8DE983dD58Ca474cBC33de43DDEBa9'
+        # 'Polygon': '0xE1c907503B8d1545AFD5A89cc44FC1E538A132DA',
+        # 'Arbitrum One': '0x26E9934024cdC7fcc9f390973d4D9ac1FA954a37',
+        'zkSync Era': Contracts.WHALE_NFT_ROUTER.address
     }
     
     def __init__(self, client: Client):
@@ -25,9 +25,12 @@ class WhaleNft:
         )
     
     async def mint(self, network_name: str = 'zkSync Era') -> str:
+        router = Contracts.WHALE_NFT_ROUTER
+        failed_text = f'Failed to mint NFT via {router.title}'
+
         contract: AsyncContract = self.client.w3.eth.contract(
             address=self.get_mint_contract_by_network(network_name), 
-            abi=read_json(self.MINT_ABI_PATH)
+            abi=router.abi
         )
         mint_price = await contract.functions.fee().call()
         
@@ -40,5 +43,13 @@ class WhaleNft:
             data=data,
             value=mint_price
         )
-        
-        return await self.client.verif_tx(tx_hash_bytes)
+
+        if not tx_hash_bytes:
+            return f'{failed_text} | Can not get tx_hash_bytes'
+
+        try:
+            tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
+            return (f'Transaction success! NFT minted via {router.title} | '
+                    f'tx_hash: {tx_hash}')
+        except Exception as err:
+            return f' {failed_text} | tx_hash: {tx_hash_bytes.hex()}; error: {err}'

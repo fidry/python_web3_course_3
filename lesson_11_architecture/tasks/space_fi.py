@@ -1,18 +1,14 @@
 import asyncio
 import time
 
-from web3 import AsyncWeb3
-
 from client import Client
-from data.config import SPACE_FI_ROUTER_ABI
-from data.models import ABIs, TokenAmount
-from utils.files_utils import read_json
+from data.models import ABIs, TokenAmount, Contracts
 
 
 class SpaceFi:
     def __init__(self, client: Client):
         self.client = client
-        self.router_abi = read_json(SPACE_FI_ROUTER_ABI)
+        self.router_abi = Contracts.SPACE_FI_ROUTER.abi
 
     async def get_raw_tx_params(self, wei_value: float = 0) -> dict:
         return {
@@ -29,8 +25,8 @@ class SpaceFi:
         slippage: float = 0.5
     ):
         path = [
-            AsyncWeb3.to_checksum_address('0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91'), # WETH
-            AsyncWeb3.to_checksum_address('0x493257fD37EDB34451f62EDf8D2a0C418852bA4C')  # USDT
+            Contracts.WETH.address,
+            Contracts.USDT.address,
         ]
 
         to_token_address = path[-1]
@@ -39,7 +35,7 @@ class SpaceFi:
             abi=self.router_abi
         )
 
-        router_address = AsyncWeb3.to_checksum_address('0xbE7D1FD1f6748bbDefC4fbaCafBb11C6Fc506d1d')
+        router_address = Contracts.SPACE_FI_ROUTER.address
         router_contract = self.client.w3.eth.contract(
             address=router_address,
             abi=self.router_abi
@@ -50,10 +46,10 @@ class SpaceFi:
         )
 
         amount_out_min = TokenAmount(
-            amount=(float(token_amount.Ether) 
-                * from_token_price_dollar 
-                / to_token_price_dollar 
-                * (100 - slippage) / 100),
+            amount=(float(token_amount.Ether)
+                    * from_token_price_dollar
+                    / to_token_price_dollar
+                    * (100 - slippage) / 100),
             decimals=await to_token_contract.functions.decimals().call()
         )
 
@@ -67,17 +63,17 @@ class SpaceFi:
         )
 
         signed_tx = self.client.w3.eth.account.sign_transaction(
-            tx_params, 
+            tx_params,
             self.client.private_key
         )
         tx_hash_bytes = await self.client.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
         receipt = await self.client.w3.eth.wait_for_transaction_receipt(tx_hash_bytes)
-        
+
         if receipt['status']:
             try:
                 tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
                 print(f'Transaction success ({token_amount.Ether} ETH -> {amount_out_min.Ether} USDT)!! '
-                    f'tx_hash: {tx_hash}')
+                      f'tx_hash: {tx_hash}')
                 # Transaction success (0.001 ETH -> 2.87 USDT)!! tx_hash: 0x358ab333050193e02623c0b81aad6acea73f358eabd35e6c7526a5e7f52b98db
             except Exception as err:
                 print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
@@ -90,8 +86,8 @@ class SpaceFi:
         slippage: float = 0.5
     ):
         path = {
-            'ETH': AsyncWeb3.to_checksum_address('0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91'),  # WETH
-            'WBTC': AsyncWeb3.to_checksum_address('0xBBeB516fb02a01611cBBE0453Fe3c580D7281011')  # WBTC
+            'ETH': Contracts.WETH.address,
+            'WBTC': Contracts.WBTC.address,
         }
 
         to_token_address = path['WBTC']
@@ -100,7 +96,7 @@ class SpaceFi:
             abi=ABIs.TokenABI
         )
 
-        router_address = AsyncWeb3.to_checksum_address('0xbE7D1FD1f6748bbDefC4fbaCafBb11C6Fc506d1d')
+        router_address = Contracts.SPACE_FI_ROUTER.address
         router_contract = self.client.w3.eth.contract(
             address=router_address,
             abi=self.router_abi
@@ -110,16 +106,16 @@ class SpaceFi:
         to_token_price_dollar = await self.client.get_token_price(token_symbol='WBTC')
 
         amount_out_min = TokenAmount(
-            amount=(float(token_amount.Ether) 
-                * from_token_price_dollar 
-                / to_token_price_dollar 
-                * (100 - slippage) / 100),
+            amount=(float(token_amount.Ether)
+                    * from_token_price_dollar
+                    / to_token_price_dollar
+                    * (100 - slippage) / 100),
             decimals=await to_token_contract.functions.decimals().call()
         )
 
         tx_hash_bytes = await self.client.send_transaction(
             to=router_address,
-            data = router_contract.encodeABI(
+            data=router_contract.encodeABI(
                 'swapExactTokensForETH',
                 args=(
                     token_amount.Wei,
@@ -137,7 +133,7 @@ class SpaceFi:
             try:
                 tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
                 print(f'Transaction success ({token_amount.Ether} ETH -> {amount_out_min.Ether} WBTC)!! '
-                    f'tx_hash: {tx_hash}')
+                      f'tx_hash: {tx_hash}')
                 # Transaction success (0.0008 ETH -> 0.000029105322888639857 WBTC)!! tx_hash: 0x669310c1ec16ed385e8d0778cc96c05e2bc3d8b2e6d3490f4363b370bc6d2446
             except Exception as err:
                 print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
@@ -145,14 +141,14 @@ class SpaceFi:
             print(f'Transaction error!!')
 
     async def swap_usdc_e_to_eth(
-        self, 
-        token_amount: TokenAmount, 
+        self,
+        token_amount: TokenAmount,
         slippage: float = 0.5
     ):
         path = [
-            AsyncWeb3.to_checksum_address('0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4'),  # USDC.e
-            AsyncWeb3.to_checksum_address('0x47260090cE5e83454d5f05A0AbbB2C953835f777'),  # SPACE
-            AsyncWeb3.to_checksum_address('0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91')   # WETH
+            Contracts.USDC_E.address,
+            Contracts.SPACE.address,
+            Contracts.WETH.address,
         ]
 
         from_token_address = path[0]
@@ -169,7 +165,7 @@ class SpaceFi:
         )
         to_token_symbol = await to_token_contract.functions.symbol().call()
 
-        router_address = AsyncWeb3.to_checksum_address('0xbE7D1FD1f6748bbDefC4fbaCafBb11C6Fc506d1d')
+        router_address = Contracts.SPACE_FI_ROUTER.address
         router_contract = self.client.w3.eth.contract(
             address=router_address,
             abi=self.router_abi
@@ -179,16 +175,16 @@ class SpaceFi:
         to_token_price_dollar = await self.client.get_token_price(token_symbol=to_token_symbol)
 
         amount_out_min = TokenAmount(
-            amount=(float(token_amount.Ether) 
-                * from_token_price_dollar 
-                / to_token_price_dollar 
-                * (100 - slippage) / 100),
+            amount=(float(token_amount.Ether)
+                    * from_token_price_dollar
+                    / to_token_price_dollar
+                    * (100 - slippage) / 100),
             decimals=await to_token_contract.functions.decimals().call()
         )
 
         tx_hash_bytes = await self.client.send_transaction(
             to=from_token_address,
-            data = from_token_contract.encodeABI(
+            data=from_token_contract.encodeABI(
                 'approve',
                 args=(
                     router_address,
@@ -199,7 +195,7 @@ class SpaceFi:
         )
 
         tx_hash = await self.client.verif_tx(tx_hash_bytes)
-        
+
         if tx_hash:
             waiting_time = 15
             print(
@@ -212,7 +208,7 @@ class SpaceFi:
 
         tx_hash_bytes = await self.client.send_transaction(
             to=router_address,
-            data = router_contract.encodeABI(
+            data=router_contract.encodeABI(
                 'swapExactTokensForETH',
                 args=(
                     token_amount.Wei,
@@ -228,8 +224,8 @@ class SpaceFi:
         if tx_hash_bytes:
             try:
                 tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
-                print(f'Transaction success ({token_amount.Ether} {from_token_symbol} -> {amount_out_min.Ether} {to_token_symbol})!! '
-                    f'tx_hash: {tx_hash}')
+                print(f'Transaction success ({token_amount.Ether} {from_token_symbol} -> {amount_out_min.Ether} '
+                      f'{to_token_symbol})!! tx_hash: {tx_hash}')
                 # Transaction success (1.961663 USDC.e -> 0.0006465444482972901 WETH)!! tx_hash: 0x0161e7cb528408427fce8eda171a251632d0b28cb89bf8dfd9616189964ae08b
             except Exception as err:
                 print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
@@ -237,8 +233,8 @@ class SpaceFi:
             print(f'Transaction error!!')
 
     async def swap_usdt_to_eth(
-        self, 
-        token_amount: TokenAmount | None = None, 
+        self,
+        token_amount: TokenAmount | None = None,
         slippage: float = 0.5,
         is_all_balance: bool = False
     ):
@@ -250,14 +246,14 @@ class SpaceFi:
         060: 0000000000000000000000002f5844b8b5c03bbc48408bfda1340f5181643f53 - my address      address
         080: 00000000000000000000000000000000000000000000000000000000672dcf91 - 1731055505      uint256
         0a0: 0000000000000000000000000000000000000000000000000000000000000003 - path le n
-        0c0: 000000000000000000000000493257fd37edb34451f62edf8d2a0c418852ba4c 
-        0e0: 00000000000000000000000047260090ce5e83454d5f05a0abbb2c953835f777 
-        100: 0000000000000000000000005aea5775959fbc2557cc8789bc1bf90a239d9a91 
+        0c0: 000000000000000000000000493257fd37edb34451f62edf8d2a0c418852ba4c
+        0e0: 00000000000000000000000047260090ce5e83454d5f05a0abbb2c953835f777
+        100: 0000000000000000000000005aea5775959fbc2557cc8789bc1bf90a239d9a91
         """
         path = [
-            AsyncWeb3.to_checksum_address('0x493257fD37EDB34451f62EDf8D2a0C418852bA4C'),  # USDT
-            AsyncWeb3.to_checksum_address('0x47260090cE5e83454d5f05A0AbbB2C953835f777'),  # SPACE
-            AsyncWeb3.to_checksum_address('0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91')   # WETH
+            Contracts.USDT.address,
+            Contracts.SPACE.address,
+            Contracts.WETH.address,
         ]
 
         from_token_address = path[0]
@@ -286,7 +282,7 @@ class SpaceFi:
                 wei=True
             )
 
-        router_address = AsyncWeb3.to_checksum_address('0xbE7D1FD1f6748bbDefC4fbaCafBb11C6Fc506d1d')
+        router_address = Contracts.SPACE_FI_ROUTER.address
         router_contract = self.client.w3.eth.contract(
             address=router_address,
             abi=self.router_abi
@@ -297,10 +293,10 @@ class SpaceFi:
         )
 
         amount_out_min = TokenAmount(
-            amount=(float(token_amount.Ether) 
-                * from_token_price_dollar 
-                / to_token_price_dollar 
-                * (100 - slippage) / 100),
+            amount=(float(token_amount.Ether)
+                    * from_token_price_dollar
+                    / to_token_price_dollar
+                    * (100 - slippage) / 100),
             decimals=await to_token_contract.functions.decimals().call()
         )
 
@@ -308,11 +304,11 @@ class SpaceFi:
             router_address,
             token_amount.Wei
         ).build_transaction(await self.get_raw_tx_params())
-        
+
         signed_tx = self.client.w3.eth.account.sign_transaction(tx_params, self.client.private_key)
         tx_hash_bytes = await self.client.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
         receipt = await self.client.w3.eth.wait_for_transaction_receipt(tx_hash_bytes)
-        
+
         if receipt['status']:
             waiting_time = 15
             print(
@@ -322,7 +318,7 @@ class SpaceFi:
             await asyncio.sleep(waiting_time)
         else:
             print('Failed')
-        
+
         data = router_contract.encodeABI(
             'swap',
             args=(
@@ -344,14 +340,14 @@ class SpaceFi:
         if tx_hash_bytes:
             try:
                 tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
-                print(f'Transaction success ({token_amount.Ether} {from_token_symbol} -> {amount_out_min.Ether} {to_token_symbol})!! '
-                    f'tx_hash: {tx_hash}')
+                print(f'Transaction success ({token_amount.Ether} {from_token_symbol} -> {amount_out_min.Ether} '
+                      f'{to_token_symbol})!! tx_hash: {tx_hash}')
                 # Transaction success (0.0004 ETH -> 1.13988 USDT)!! tx_hash: 0x16ed6ce885e1f65a4a068b5e9253a5ebe2251ae93ed878ab583830515c627fb0
             except Exception as err:
                 print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
         else:
             print(f'Transaction error!!')
-    
+
     async def swap_usdt_to_usdc_e(
         self,
         token_amount: TokenAmount | None = None,
@@ -359,9 +355,9 @@ class SpaceFi:
         is_all_balance: bool = False
     ):
         path = [
-            AsyncWeb3.to_checksum_address('0x493257fD37EDB34451f62EDf8D2a0C418852bA4C'),  # USDT
-            AsyncWeb3.to_checksum_address('0x47260090cE5e83454d5f05A0AbbB2C953835f777'),  # SPACE
-            AsyncWeb3.to_checksum_address('0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4'),  # USDC.E
+            Contracts.USDT.address,
+            Contracts.SPACE.address,
+            Contracts.USDC_E.address,
         ]
 
         from_token_address = path[0]
@@ -386,7 +382,7 @@ class SpaceFi:
                 wei=True
             )
 
-        router_address = AsyncWeb3.to_checksum_address('0xbE7D1FD1f6748bbDefC4fbaCafBb11C6Fc506d1d')
+        router_address = Contracts.SPACE_FI_ROUTER.address
         router_contract = self.client.w3.eth.contract(
             address=router_address,
             abi=self.router_abi
@@ -398,16 +394,16 @@ class SpaceFi:
         )
 
         amount_out_min = TokenAmount(
-            amount=(float(token_amount.Ether) 
-                * from_token_price_dollar 
-                / to_token_price_dollar 
-                * (100 - slippage) / 100),
+            amount=(float(token_amount.Ether)
+                    * from_token_price_dollar
+                    / to_token_price_dollar
+                    * (100 - slippage) / 100),
             decimals=await to_token_contract.functions.decimals().call()
         )
 
         tx_hash_bytes = await self.client.send_transaction(
             to=from_token_address,
-            data = from_token_contract.encodeABI(
+            data=from_token_contract.encodeABI(
                 'approve',
                 args=(
                     router_address,
@@ -451,7 +447,7 @@ class SpaceFi:
             try:
                 tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
                 print(f'Transaction success ({token_amount.Ether} USDT -> {amount_out_min.Ether} USDC.e)!! '
-                    f'tx_hash: {tx_hash}')
+                      f'tx_hash: {tx_hash}')
                 # Transaction success (2.027439 USDT -> 1.946341 USDC.e)!! tx_hash: 0xbd678a795c66238f067a0df7f49c759d7e3bc422a60c8fd7baadd1532566c98c
             except Exception as err:
                 print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')

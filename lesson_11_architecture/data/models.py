@@ -102,103 +102,6 @@ class Settings:
         )
 
 
-class RawContract:
-    """
-    An instance of a raw contract.
-
-    Attributes:
-        title str: a contract title.
-        address (ChecksumAddress): a contract address.
-        abi list[dict[str, Any]] | str: an ABI of the contract.
-
-    """
-    title: str
-    address: ChecksumAddress
-    abi: list[dict[str, ...]]
-
-    def __init__(self, address: str, abi: list[dict[str, ...]] | str | None = None, title: str = '') -> None:
-        """
-        Initialize the class.
-
-        Args:
-            title (str): a contract title.
-            address (str): a contract address.
-            abi (Union[List[Dict[str, Any]], str]): an ABI of the contract.
-
-        """
-        self.title = title
-        self.address = AsyncWeb3.to_checksum_address(address)
-        self.abi = json.loads(abi) if isinstance(abi, str) else abi
-
-    def __eq__(self, other) -> bool:
-        if self.address == other.address and self.abi == other.abi:
-            return True
-        return False
-
-
-class Contracts:
-    ...
-    # # ZkSync
-    # MUTE = RawContract(
-    #     title='mute',
-    #     address='0x8b791913eb07c32779a16750e3868aa8495f5964',
-    #     abi=read_json(path=(ABIS_DIR, 'mute.json'))
-    # )
-    #
-    # SPACE_FI = RawContract(
-    #     title='space_fi',
-    #     address='0xbe7d1fd1f6748bbdefc4fbacafbb11c6fc506d1d',
-    #     abi=read_json(path=(ABIS_DIR, 'space_fi.json'))
-    # )
-    #
-    # SYNC_SWAP = RawContract(
-    #     title='sync_swap',
-    #     address='0x2da10A1e27bF85cEdD8FFb1AbBe97e53391C0295',
-    #     abi=read_json(path=(ABIS_DIR, 'sync_swap.json'))
-    # )
-    #
-    # MAVERICK = RawContract(
-    #     title='maverick',
-    #     address='0x39E098A153Ad69834a9Dac32f0FCa92066aD03f4',
-    #     abi=read_json(path=(ABIS_DIR, 'maverick.json'))
-    # )
-    #
-    # DMAIL = RawContract(
-    #     title='dmail',
-    #     address='0x981F198286E40F9979274E0876636E9144B8FB8E',
-    #     abi=read_json(path=(ABIS_DIR, 'dmail.json'))
-    # )
-    #
-    # WETH = RawContract(
-    #     title='WETH',
-    #     address='0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91',
-    #     abi=read_json(path=(ABIS_DIR, 'WETH.json'))
-    # )
-    #
-    # USDC = RawContract(
-    #     title='USDC',
-    #     address='0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4',
-    #     abi=DefaultABIs.Token
-    # )
-    #
-    # WBTC = RawContract(
-    #     title='WBTC',
-    #     address='0xBBeB516fb02a01611cBBE0453Fe3c580D7281011',
-    #     abi=DefaultABIs.Token
-    # )
-    #
-    # USDT = RawContract(
-    #     title='USDT',
-    #     address='0x493257fd37edb34451f62edf8d2a0c418852ba4c',
-    #     abi=DefaultABIs.Token
-    # )
-    #
-    # ceBUSD = RawContract(
-    #     title='ceBUSD',
-    #     address='0x2039bb4116B4EFc145Ec4f0e2eA75012D6C0f181',
-    #     abi=DefaultABIs.Token
-    # )
-
 class ABIs:
     TokenABI = [
         {
@@ -264,3 +167,102 @@ class ABIs:
             'type': 'function'
         },
     ]
+
+
+class RawContract:
+    """
+    An instance of a raw contract.
+
+    Attributes:
+        title str: a contract title.
+        address (ChecksumAddress): a contract address.
+        abi list[dict[str, Any]] | str: an ABI of the contract.
+
+    """
+    title: str
+    address: ChecksumAddress
+    abi: list[dict[str, ...]]
+
+    def __init__(self, address: str, abi: list[dict[str, ...]] | str | None = None, title: str = '') -> None:
+        """
+        Initialize the class.
+
+        Args:
+            title (str): a contract title.
+            address (str): a contract address.
+            abi (Union[List[Dict[str, Any]], str]): an ABI of the contract.
+
+        """
+        self.title = title
+        self.address = AsyncWeb3.to_checksum_address(address)
+        self.abi = json.loads(abi) if isinstance(abi, str) else abi
+
+    def __eq__(self, other) -> bool:
+        if self.address == other.address and self.abi == other.abi:
+            return True
+        return False
+
+
+class Contracts:
+    # routers
+    SPACE_FI_ROUTER = RawContract(
+        title='SpaceFi',
+        address=AsyncWeb3.to_checksum_address('0xbE7D1FD1f6748bbDefC4fbaCafBb11C6Fc506d1d'),
+        abi=read_json(path=(ABIS_DIR, 'space_fi', 'router_abi.json'))
+    )
+
+    KOI_FINANCE_ROUTER = RawContract(
+        title='KoiFinance',
+        address=AsyncWeb3.to_checksum_address('0x3388530FbaF0C916fA7C0390413DFB178Cb33CBb'),
+        abi=read_json(path=(ABIS_DIR, 'koi_finance', 'router_abi.json'))
+    )
+
+    SYNCSWAP_ROUTER = RawContract(
+        title='SyncSwap',
+        address=AsyncWeb3.to_checksum_address('...'),
+        abi=read_json(path=(ABIS_DIR, 'syncswap', 'router_abi.json'))
+    )
+
+    WHALE_NFT_ROUTER = RawContract(
+        title='WhaleNFT',
+        address=AsyncWeb3.to_checksum_address('0xF09A71F6CC8DE983dD58Ca474cBC33de43DDEBa9'),
+        abi=read_json(path=(ABIS_DIR, 'whale-app', 'mint_abi.json'))
+    )
+
+    # tokens
+    WETH = RawContract(
+        title='WETH',
+        address=AsyncWeb3.to_checksum_address('0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91'),
+        abi=ABIs.TokenABI
+    )
+
+    USDT = RawContract(
+        title='USDT',
+        address=AsyncWeb3.to_checksum_address('0x493257fD37EDB34451f62EDf8D2a0C418852bA4C'),
+        abi=ABIs.TokenABI
+    )
+
+    USDC = RawContract(
+        title='USDC',
+        address=AsyncWeb3.to_checksum_address('0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4'),
+        abi=ABIs.TokenABI
+    )
+
+    USDC_E = RawContract(
+        title='USDC.e',
+        address=AsyncWeb3.to_checksum_address('0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4'),
+        abi=ABIs.TokenABI
+    )
+
+    WBTC = RawContract(
+        title='WBTC',
+        address=AsyncWeb3.to_checksum_address('0xBBeB516fb02a01611cBBE0453Fe3c580D7281011'),
+        abi=ABIs.TokenABI
+    )
+
+    SPACE = RawContract(
+        title='SPACE',
+        address=AsyncWeb3.to_checksum_address('0x47260090cE5e83454d5f05A0AbbB2C953835f777'),
+        abi=ABIs.TokenABI
+    )
+

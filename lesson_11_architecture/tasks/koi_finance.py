@@ -1,39 +1,33 @@
-import asyncio
-import random
 import time
+import random
+import asyncio
 
-from web3 import AsyncWeb3
-
-from client import Client
-from data.config import KOI_FINANCE_ROUTER_ABI
-from data.models import ABIs, TokenAmount
-from utils.files_utils import read_json
 from tasks.base import Base
+from data.models import TokenAmount, Contracts
+
 
 class KoiFinance(Base):
-    def __init__(self, client: Client):
-        super().__init__(client)
-        self.router_abi = read_json(KOI_FINANCE_ROUTER_ABI)
-
-    async def swap_eth_to_usdc(
+    async def _swap_eth_to_usdc(
         self,
-        token_amount: TokenAmount,
+        token_amount: TokenAmount | None = None,
         slippage: float = 1
-    ):
-        weth_address = AsyncWeb3.to_checksum_address('0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91')
-        usdc_address = AsyncWeb3.to_checksum_address('0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4')
-        usdc_e_address = AsyncWeb3.to_checksum_address('0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4')
-        
+    ) -> str:
+        to_token = Contracts.USDC
+        router = Contracts.KOI_FINANCE_ROUTER
+
+        if not token_amount:
+            token_amount = self.get_eth_amount_for_swap()
+
+        failed_text = f'Failed to swap ETH to {to_token.title} via {router.title}'
+
         to_token_contract = self.client.w3.eth.contract(
-            address=usdc_address,
-            abi=ABIs.TokenABI
+            address=to_token.address,
+            abi=to_token.abi
         )
 
-        # адрес свапалки
-        router_address = AsyncWeb3.to_checksum_address('0x3388530FbaF0C916fA7C0390413DFB178Cb33CBb')
         router_contract = self.client.w3.eth.contract(
-            address=router_address,
-            abi=self.router_abi
+            address=router.address,
+            abi=router.abi
         )
 
         from_token_price_dollar, to_token_price_dollar = await asyncio.gather(
@@ -73,11 +67,11 @@ class KoiFinance(Base):
              + self.to_cut_hex_prefix_and_zfill("a0")
              + self.to_cut_hex_prefix_and_zfill("")
              + self.to_cut_hex_prefix_and_zfill(2)
-             + self.to_cut_hex_prefix_and_zfill(weth_address)
-             + self.to_cut_hex_prefix_and_zfill(usdc_e_address)
+             + self.to_cut_hex_prefix_and_zfill(Contracts.WETH.address)
+             + self.to_cut_hex_prefix_and_zfill(Contracts.USDC_E.address)
              + self.to_cut_hex_prefix_and_zfill(1)
-             + self.to_cut_hex_prefix_and_zfill(usdc_e_address)
-             + self.to_cut_hex_prefix_and_zfill(usdc_address)
+             + self.to_cut_hex_prefix_and_zfill(Contracts.USDC_E.address)
+             + self.to_cut_hex_prefix_and_zfill(Contracts.USDC.address)
              + self.to_cut_hex_prefix_and_zfill("")),
 
             ('0x'
@@ -87,16 +81,16 @@ class KoiFinance(Base):
              + self.to_cut_hex_prefix_and_zfill("a0")
              + self.to_cut_hex_prefix_and_zfill("")
              + self.to_cut_hex_prefix_and_zfill(2)
-             + self.to_cut_hex_prefix_and_zfill(weth_address)
-             + self.to_cut_hex_prefix_and_zfill(usdc_e_address)
+             + self.to_cut_hex_prefix_and_zfill(Contracts.WETH.address)
+             + self.to_cut_hex_prefix_and_zfill(Contracts.USDC_E.address)
              + self.to_cut_hex_prefix_and_zfill(1)
-             + self.to_cut_hex_prefix_and_zfill(usdc_e_address)
-             + self.to_cut_hex_prefix_and_zfill(usdc_address)
+             + self.to_cut_hex_prefix_and_zfill(Contracts.USDC_E.address)
+             + self.to_cut_hex_prefix_and_zfill(Contracts.USDC.address)
              + self.to_cut_hex_prefix_and_zfill(""))
         ]
 
         tx_hash_bytes = await self.client.send_transaction(
-            to=router_address,
+            to=router.address,
             data=router_contract.encodeABI(
                 'execute',
                 args=(
@@ -108,13 +102,12 @@ class KoiFinance(Base):
             max_priority_fee_per_gas=0,
         )
 
-        if tx_hash_bytes:
-            try:
-                tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
-                print(f'Transaction success ({token_amount.Ether} ETH -> {amount_out_min.Ether} USDC)!! '
-                      f'tx_hash: {tx_hash}')
-            except Exception as err:
-                print(f'Transaction error!! tx_hash: {tx_hash_bytes.hex()}; error: {err}')
-        else:
-            print(f'Transaction error!!')
-    
+        if not tx_hash_bytes:
+            return f'{failed_text} | Can not get tx_hash_bytes'
+
+        try:
+            tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
+            return (f'Transaction success! ({token_amount.Ether} ETH -> {amount_out_min.Ether} {to_token.title}) | '
+                    f'tx_hash: {tx_hash}')
+        except Exception as err:
+            return f' {failed_text} | tx_hash: {tx_hash_bytes.hex()}; error: {err}'
