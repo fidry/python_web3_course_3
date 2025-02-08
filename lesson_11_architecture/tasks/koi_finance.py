@@ -12,13 +12,15 @@ class KoiFinance(Base):
         token_amount: TokenAmount | None = None,
         slippage: float = 1
     ) -> str:
-        to_token = Contracts.USDC
         router = Contracts.KOI_FINANCE_ROUTER
+        from_token = Contracts.WETH
+        to_token = Contracts.USDC
 
         if not token_amount:
             token_amount = self.get_eth_amount_for_swap()
 
-        failed_text = f'Failed to swap ETH to {to_token.title} via {router.title}'
+        failed_text = (f'Failed to swap {token_amount.Ether} {from_token.address} '
+                       f'to {to_token.address} via {router.title}')
 
         to_token_contract = self.client.w3.eth.contract(
             address=to_token.address,
@@ -31,8 +33,8 @@ class KoiFinance(Base):
         )
 
         from_token_price_dollar, to_token_price_dollar = await asyncio.gather(
-            self.client.get_token_price(token_symbol='ETH'),
-            self.client.get_token_price(token_symbol='USDC')
+            self.client.get_token_price(token_symbol=from_token.title),
+            self.client.get_token_price(token_symbol=to_token.title)
         )
 
         swap_ratios = [0.2, 0.4]
@@ -107,7 +109,7 @@ class KoiFinance(Base):
 
         try:
             tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
-            return (f'Transaction success! ({token_amount.Ether} ETH -> {amount_out_min.Ether} {to_token.title}) | '
-                    f'tx_hash: {tx_hash}')
+            return (f'({router.title}) Transaction success! ({token_amount.Ether} ETH -> '
+                    f'{amount_out_min.Ether} {to_token.title}) | tx_hash: {tx_hash}')
         except Exception as err:
             return f' {failed_text} | tx_hash: {tx_hash_bytes.hex()}; error: {err}'

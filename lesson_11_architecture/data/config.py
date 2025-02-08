@@ -10,6 +10,7 @@ if getattr(sys, 'frozen', False):
 else:
     ROOT_DIR = Path(__file__).parent.parent.absolute()
 
+SLEEP_AFTER_APPROVAL = 5
 ABIS_DIR = os.path.join(ROOT_DIR, 'data', 'abis')
 FILES_DIR = os.path.join(ROOT_DIR, 'files')
 

@@ -11,7 +11,7 @@ from web3.exceptions import Web3Exception
 from web3 import AsyncWeb3, Web3
 from web3.middleware import geth_poa_middleware
 
-from data.models import TokenAmount
+from data.models import TokenAmount, ABIs
 
 
 class Client:
@@ -173,6 +173,57 @@ class Client:
             await asyncio.sleep(sleep)
             gas_price = await self.w3.eth.gas_price
             gas_price_gwei = AsyncWeb3.from_wei(gas_price, unit='gwei')
+
+    async def approved_amount(
+            self,
+            token_address: str | ChecksumAddress,
+            spender: str | ChecksumAddress,
+            owner: str | ChecksumAddress
+    ) -> TokenAmount:
+        contract = self.w3.eth.contract(
+            address=token_address,
+            abi=ABIs.TokenABI
+        )
+        if not owner:
+            owner = self.account.address
+
+        return TokenAmount(
+            amount=await contract.functions.allowance(
+                Web3.to_checksum_address(owner),
+                Web3.to_checksum_address(spender)
+            ).call(),
+            decimals=await contract.functions.decimals().call(),
+            wei=True
+        )
+
+    async def approve(
+            self,
+            token_address: str | ChecksumAddress,
+            spender: str | ChecksumAddress,
+            amount: TokenAmount
+    ) -> str | None:
+        spender = Web3.to_checksum_address(spender)
+        contract = self.w3.eth.contract(
+            address=token_address,
+            abi=ABIs.TokenABI
+        )
+
+        tx_hash_bytes = await self.send_transaction(
+            to=contract.address,
+            data=contract.encodeABI(
+                'approve',
+                args=(
+                    spender,
+                    amount.Wei,
+                )),
+            max_priority_fee_per_gas=0,
+        )
+
+        try:
+            return await self.verif_tx(tx_hash=tx_hash_bytes)
+        except Exception:
+            ...
+        return None
 
     @staticmethod
     async def get_token_price(token_symbol='ETH') -> float | None:

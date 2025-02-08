@@ -49,7 +49,7 @@ class WhaleNft:
 
         try:
             tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
-            return (f'Transaction success! NFT minted via {router.title} | '
+            return (f'({router.title}) Transaction success! NFT minted via {router.title} | '
                     f'tx_hash: {tx_hash}')
         except Exception as err:
             return f' {failed_text} | tx_hash: {tx_hash_bytes.hex()}; error: {err}'
