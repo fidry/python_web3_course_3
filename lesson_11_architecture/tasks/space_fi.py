@@ -62,7 +62,7 @@ class SpaceFi(Base):
 
         # Approve
         if not from_token_is_native:
-            if not self.approve_interface(
+            if not await self.approve_interface(
                 token_address=from_token.address,
                 spender=router.address,
                 amount=token_amount

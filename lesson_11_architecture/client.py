@@ -124,10 +124,10 @@ class Client:
             wallet_address: str | ChecksumAddress | None = None,
             token_address: str | None = None
     ) -> TokenAmount:
-        wallet_address = AsyncWeb3.to_checksum_address(wallet_address)
-
         if not wallet_address:
             wallet_address = self.account.address
+        
+        wallet_address = AsyncWeb3.to_checksum_address(wallet_address)
 
         if not token_address:
             return TokenAmount(
@@ -160,7 +160,7 @@ class Client:
             contract = self.w3.eth.contract(address=token_address, abi=token_abi)
             return TokenAmount(
                 amount=await contract.functions.balanceOf(wallet_address).call(),
-                decimals=await contract.functions.decimals(wallet_address).call(),
+                decimals=await contract.functions.decimals().call(),
                 wei=True
             )
 
