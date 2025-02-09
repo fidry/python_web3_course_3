@@ -204,6 +204,8 @@ class RawContract:
 
 
 class Contracts:
+    ZERO_ADDRESS = AsyncWeb3.to_checksum_address('0x0000000000000000000000000000000000000000')
+    
     # routers
     SPACE_FI_ROUTER = RawContract(
         title='SpaceFi',
@@ -219,7 +221,7 @@ class Contracts:
 
     SYNCSWAP_ROUTER = RawContract(
         title='SyncSwap',
-        address=AsyncWeb3.to_checksum_address('...'),
+        address=AsyncWeb3.to_checksum_address('0x9B5def958d0f3b6955cBEa4D5B7809b2fb26b059'),
         abi=read_json(path=(ABIS_DIR, 'syncswap', 'router_abi.json'))
     )
 
@@ -265,4 +267,21 @@ class Contracts:
         address=AsyncWeb3.to_checksum_address('0x47260090cE5e83454d5f05A0AbbB2C953835f777'),
         abi=ABIs.TokenABI
     )
-
+    
+    USDC_E_ZK_LP = RawContract(
+        title='USDC_E_ZK_LP',
+        address=AsyncWeb3.to_checksum_address('0x40b768de8b2e4ed83d982804cb2fcc53d2529be9'),
+        abi=ABIs.TokenABI
+    )
+    
+    ZK = RawContract(
+        title='ZK',
+        address=AsyncWeb3.to_checksum_address('0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e'),
+        abi=ABIs.TokenABI
+    )
+    
+    ZK_WETH_C_LP = RawContract(
+        title='ZK_WETH_C_LP',
+        address=AsyncWeb3.to_checksum_address('0x90899441D5c9801d57773a3d5b8B880520CF2fe1'),
+        abi=ABIs.TokenABI
+    )

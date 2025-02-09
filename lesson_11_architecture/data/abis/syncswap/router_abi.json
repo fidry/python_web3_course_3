@@ -977,6 +977,11 @@
                 "internalType": "bytes",
                 "name": "callbackData",
                 "type": "bytes"
+              },
+              {
+                "internalType": "bool",
+                "name": "useVault",
+                "type": "bool"
               }
             ],
             "internalType": "struct IRouter.SwapStep[]",
