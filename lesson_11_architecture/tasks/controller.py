@@ -62,7 +62,7 @@ class Controller(Base):
         result_count += len(await api_oklink.address.find_txs(
             address=self.client.account.address,
             signature='0xd7570e45',
-            to=Contracts.SPACE_FI_ROUTER.address,
+            to=Contracts.SYNCSWAP_ROUTER.address,
             chain=chain,
             txs_lst=txs_lst
         ))
