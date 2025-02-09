@@ -18,7 +18,6 @@ class Controller(Base):
         self.whale_nft = WhaleNft(client)
 
     async def count_swaps(self, txs_lst: list[dict] | None = None):
-        # todo: доделать
         settings = Settings()
         chain = 'zksync'
 
@@ -32,20 +31,38 @@ class Controller(Base):
                 chain=chain
             )
 
-        # ...
+        # KoiFinance ETH -> Token
         result_count += len(await api_oklink.address.find_txs(
             address=self.client.account.address,
-            signature='...',
-            to=...,  # Contracts...
+            signature='0x7ff36ab5',
+            to=Contracts.KOI_FINANCE_ROUTER.address,
             chain=chain,
             txs_lst=txs_lst
         ))
 
-        # ...
+        # SpaceFi ETH -> Token
         result_count += len(await api_oklink.address.find_txs(
             address=self.client.account.address,
-            signature='...',
-            to=...,  # Contracts...
+            signature='0x7ff36ab5',
+            to=Contracts.SPACE_FI_ROUTER.address,
+            chain=chain,
+            txs_lst=txs_lst
+        ))
+
+        # SpaceFi Token -> ETH
+        result_count += len(await api_oklink.address.find_txs(
+            address=self.client.account.address,
+            signature='0x18cbafe5',
+            to=Contracts.SPACE_FI_ROUTER.address,
+            chain=chain,
+            txs_lst=txs_lst
+        ))
+
+        # SyncSwap Token -> ETH
+        result_count += len(await api_oklink.address.find_txs(
+            address=self.client.account.address,
+            signature='0xd7570e45',
+            to=Contracts.SPACE_FI_ROUTER.address,
             chain=chain,
             txs_lst=txs_lst
         ))
@@ -53,7 +70,6 @@ class Controller(Base):
         return result_count
 
     async def count_mints_nft(self, txs_lst: list[dict] | None = None):
-        # todo: доделать
         settings = Settings()
         chain = 'zksync'
 
@@ -67,11 +83,11 @@ class Controller(Base):
                 chain=chain
             )
 
-        # ...
+        # Whale NFT
         result_count += len(await api_oklink.address.find_txs(
             address=self.client.account.address,
-            signature='...',
-            to=...,  # Contracts...
+            signature='0x1249c58b',
+            to=Contracts.WHALE_NFT_ROUTER.address,
             chain=chain,
             txs_lst=txs_lst
         ))
