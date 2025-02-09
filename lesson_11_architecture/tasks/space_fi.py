@@ -7,15 +7,6 @@ from data.models import TokenAmount, Contracts, RawContract
 
 
 class SpaceFi(Base):
-    async def get_raw_tx_params(self, wei_value: float = 0) -> dict:
-        return {
-            "chainId": await self.client.w3.eth.chain_id,
-            "from": self.client.account.address,
-            "value": wei_value,
-            "gasPrice": await self.client.w3.eth.gas_price,
-            "nonce": await self.client.w3.eth.get_transaction_count(self.client.account.address),
-        }
-
     async def _swap(
             self,
             path: list[RawContract],
@@ -28,8 +19,20 @@ class SpaceFi(Base):
         addresses_path = list(map(lambda x: x.address, path))
         from_token_is_native = from_token.address == Contracts.WETH.address
 
+        from_token_contract = self.client.w3.eth.contract(
+            address=to_token.address,
+            abi=to_token.abi
+        )
+
         if not token_amount:
-            token_amount = self.get_eth_amount_for_swap()
+            if from_token_is_native:
+                token_amount = self.get_eth_amount_for_swap()
+            else:
+                token_amount = TokenAmount(
+                    amount=await from_token_contract.functions.balanceOf(self.client.account.address).call(),
+                    decimals=await from_token_contract.functions.decimals().call(),
+                    wei=True
+                )
 
         failed_text = (f'Failed to swap {token_amount.Ether} {from_token.address} '
                        f'to {to_token.address} via {router.title}')
