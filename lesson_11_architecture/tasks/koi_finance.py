@@ -51,7 +51,7 @@ class KoiFinance(Base):
                 / to_token_price_dollar
                 * (100 - slippage) / 100
             ),
-            decimals=to_token_contract.functions.decimals().call()
+            decimals=await to_token_contract.functions.decimals().call()
         )
         small_amount_in_wei = int(token_amount.Wei * selected_small_ratio)
         big_amount_in_wei = int(token_amount.Wei * selected_big_ratio)
