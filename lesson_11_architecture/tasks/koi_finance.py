@@ -110,8 +110,6 @@ class KoiFinance(Base):
             return f'{failed_text} | Can not get tx_hash_bytes'
 
         try:
-            # Transaction success (0.001 ETH -> 2.28988 USDC)!!
-            # tx_hash: 0x5e97aaaa972dc2aca2bdb8b6241fe6dd5bb9eaeb238d0dcd941c31c46198b51e
             tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
             return (f'({router.title}) Transaction success! ({token_amount.Ether} ETH -> '
                     f'{amount_out_min.Ether} {to_token.title}) | tx_hash: {tx_hash}')
