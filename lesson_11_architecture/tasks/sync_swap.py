@@ -12,7 +12,7 @@ class SyncSwap(Base):
     async def swap_usdc_e_to_eth(
         self,
         token_amount: TokenAmount | None = None,
-        slippage: float = 1
+        slippage: float = 5
     ) -> str:
         # tx: 0x7745acda9245519bf3bce114076f064d06099bb5ba5a061ac87159a0951fffd3
         router = Contracts.SYNCSWAP_ROUTER
