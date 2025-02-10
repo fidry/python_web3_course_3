@@ -36,6 +36,7 @@ class SpaceFi(Base):
 
         failed_text = (f'Failed to swap {token_amount.Ether} {from_token.address} '
                        f'to {to_token.address} via {router.title}')
+        logger.info(f'Start swap {token_amount.Ether} {from_token.title} to {to_token.address} via {router.title}')
 
         to_token_contract = self.client.w3.eth.contract(
             address=to_token.address,
@@ -143,9 +144,9 @@ class SpaceFi(Base):
         # tx_hash: 0x0161e7cb528408427fce8eda171a251632d0b28cb89bf8dfd9616189964ae08b
         return await self._swap(
             path=[
-                Contracts.USDC_E.address,
-                Contracts.SPACE.address,
-                Contracts.WETH.address,
+                Contracts.USDC_E,
+                Contracts.SPACE,
+                Contracts.WETH,
             ],
             token_amount=token_amount,
             slippage=slippage
@@ -156,9 +157,9 @@ class SpaceFi(Base):
         # tx_hash: 0x16ed6ce885e1f65a4a068b5e9253a5ebe2251ae93ed878ab583830515c627fb0
         return await self._swap(
             path=[
-                Contracts.USDT.address,
-                Contracts.SPACE.address,
-                Contracts.WETH.address,
+                Contracts.USDT,
+                Contracts.SPACE,
+                Contracts.WETH,
             ],
             token_amount=token_amount,
             slippage=slippage
@@ -169,9 +170,9 @@ class SpaceFi(Base):
         # tx_hash: 0xbd678a795c66238f067a0df7f49c759d7e3bc422a60c8fd7baadd1532566c98c
         return await self._swap(
             path=[
-                Contracts.USDT.address,
-                Contracts.SPACE.address,
-                Contracts.USDC_E.address,
+                Contracts.USDT,
+                Contracts.SPACE,
+                Contracts.USDC_E,
             ],
             token_amount=token_amount,
             slippage=slippage

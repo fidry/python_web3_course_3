@@ -14,6 +14,7 @@ class SyncSwap(Base):
         token_amount: TokenAmount | None = None,
         slippage: float = 1
     ) -> str:
+        # tx: 0x7745acda9245519bf3bce114076f064d06099bb5ba5a061ac87159a0951fffd3
         router = Contracts.SYNCSWAP_ROUTER
         from_token = Contracts.USDC_E
         to_token = Contracts.WETH
@@ -33,6 +34,7 @@ class SyncSwap(Base):
 
         failed_text = (f'Failed to swap {token_amount.Ether} {from_token.address} '
                        f'to {to_token.address} via {router.title}')
+        logger.info(f'Start swap {token_amount.Ether} {from_token.title} to {to_token.address} via {router.title}')
 
         to_token_contract = self.client.w3.eth.contract(
             address=to_token.address,

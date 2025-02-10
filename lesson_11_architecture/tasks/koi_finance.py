@@ -3,6 +3,7 @@ import random
 import asyncio
 
 from tasks.base import Base
+from data.config import logger
 from data.models import TokenAmount, Contracts
 
 
@@ -21,6 +22,7 @@ class KoiFinance(Base):
 
         failed_text = (f'Failed to swap {token_amount.Ether} {from_token.address} '
                        f'to {to_token.address} via {router.title}')
+        logger.info(f'Start swap {token_amount.Ether} {from_token.title} to {to_token.address} via {router.title}')
 
         to_token_contract = self.client.w3.eth.contract(
             address=to_token.address,

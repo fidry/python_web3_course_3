@@ -2,6 +2,7 @@ from web3 import AsyncWeb3
 from web3.contract.async_contract import AsyncContract
 
 from client import Client
+from data.config import logger
 from data.models import Contracts
 
 
@@ -27,6 +28,7 @@ class WhaleNft:
     async def mint(self, network_name: str = 'zkSync Era') -> str:
         router = Contracts.WHALE_NFT_ROUTER
         failed_text = f'Failed to mint NFT via {router.title}'
+        logger.info(f'Start mint NFT via {router.title}')
 
         contract: AsyncContract = self.client.w3.eth.contract(
             address=self.get_mint_contract_by_network(network_name), 

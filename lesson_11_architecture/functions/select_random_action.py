@@ -68,7 +68,7 @@ async def select_random_action(controller: Controller, wallet: Wallet, initial: 
 
             weights += [
                 1,
-                1,
+                0.1,
             ]
 
         if usdt_balance.Wei:
