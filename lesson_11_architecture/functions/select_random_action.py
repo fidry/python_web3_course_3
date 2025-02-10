@@ -52,7 +52,6 @@ async def select_random_action(controller: Controller, wallet: Wallet, initial: 
                 controller.space_fi.swap_eth_to_usdt,
                 controller.space_fi.swap_eth_to_wbtc,
                 controller.koi_finance.swap_eth_to_usdc,
-                controller.syncswap.swap_usdc_e_to_eth,
             ]
 
             weights += [

@@ -204,8 +204,6 @@ class RawContract:
 
 
 class Contracts:
-    ZERO_ADDRESS = AsyncWeb3.to_checksum_address('0x0000000000000000000000000000000000000000')
-    
     # routers
     SPACE_FI_ROUTER = RawContract(
         title='SpaceFi',
@@ -232,6 +230,12 @@ class Contracts:
     )
 
     # tokens
+    ZERO_ADDRESS = RawContract(
+        title='Zero Address (ETH)',
+        address=AsyncWeb3.to_checksum_address('0x0000000000000000000000000000000000000000'),
+        abi=ABIs.TokenABI
+    )
+
     WETH = RawContract(
         title='WETH',
         address=AsyncWeb3.to_checksum_address('0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91'),

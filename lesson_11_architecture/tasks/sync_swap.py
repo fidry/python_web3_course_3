@@ -1,5 +1,4 @@
 import asyncio
-import json
 import time
 
 from eth_abi import abi
@@ -81,7 +80,7 @@ class SyncSwap(Base):
                         [from_token.address, Contracts.ZK_WETH_C_LP.address, 2]
                     )
                 ),
-                Contracts.ZERO_ADDRESS,
+                Contracts.ZERO_ADDRESS.address,
                 '0x',
                 False
             ],
@@ -93,7 +92,7 @@ class SyncSwap(Base):
                         [Contracts.ZK.address, self.client.account.address, 1]
                     )
                 ),
-                Contracts.ZERO_ADDRESS,
+                Contracts.ZERO_ADDRESS.address,
                 '0x',
                 False
             ]
