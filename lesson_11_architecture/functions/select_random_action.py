@@ -37,7 +37,7 @@ async def select_random_action(controller: Controller, wallet: Wallet, initial: 
         )
         swaps = await controller.count_swaps(txs_lst=txs_lst)
         mints_nft = await controller.count_mints_nft(txs_lst=txs_lst)
-        logger.debug(
+        logger.info(
             f'{wallet.address} | amount swaps: {swaps}/{wallet.number_of_swaps}; '
             f'amount mits nft: {mints_nft}/{wallet.number_of_mint_nft}; '
         )

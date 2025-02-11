@@ -83,8 +83,6 @@ async def initial():
 
                 logger.info(f'The next closest initial action will be performed at {next_action_time}')
 
-                await asyncio.sleep(delay)
-
             else:
                 update_next_action_time(
                     private_key=wallet.private_key, seconds=settings.delay_in_case_of_error, initial=True)

@@ -20,9 +20,9 @@ class KoiFinance(Base):
         if not token_amount:
             token_amount = self.get_eth_amount_for_swap()
 
-        failed_text = (f'Failed to swap {token_amount.Ether} {from_token.address} '
-                       f'to {to_token.address} via {router.title}')
-        logger.info(f'Start swap {token_amount.Ether} {from_token.title} to {to_token.address} via {router.title}')
+        failed_text = (f'Failed to swap {token_amount.Ether} {from_token.title} '
+                       f'to {to_token.title} via {router.title}')
+        logger.info(f'Start swap {token_amount.Ether} {from_token.title} to {to_token.title} via {router.title}')
 
         to_token_contract = self.client.w3.eth.contract(
             address=to_token.address,

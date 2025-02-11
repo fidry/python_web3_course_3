@@ -75,35 +75,34 @@ class SpaceFi(Base):
                             f'sleeping {SLEEP_AFTER_APPROVAL} secs...')
                 await asyncio.sleep(SLEEP_AFTER_APPROVAL)
 
-            tx_hash_bytes = await self.client.send_transaction(
-                to=router.address,
-                data=router_contract.encodeABI(
-                    'swapExactTokensForETH',
-                    args=(
-                        token_amount.Wei,
-                        amount_out_min.Wei,
-                        addresses_path,
-                        self.client.account.address,
-                        int(time.time() + 1200)
-                    )
-                ),
-                max_priority_fee_per_gas=0
+            data = router_contract.encodeABI(
+                'swapExactTokensForETH',
+                args=(
+                    token_amount.Wei,
+                    amount_out_min.Wei,
+                    addresses_path,
+                    self.client.account.address,
+                    int(time.time() + 1200)
+                )
             )
 
         else:
-            tx_hash_bytes = await self.client.send_transaction(
-                to=router.address,
-                data=router_contract.encodeABI(
-                    'swapExactETHForTokens',
-                    args=(
-                        amount_out_min.Wei,
-                        addresses_path,
-                        self.client.account.address,
-                        int(time.time() + 1200)
-                    )),
-                value=token_amount.Wei,
-                max_priority_fee_per_gas=0,
+            data = router_contract.encodeABI(
+                'swapExactETHForTokens',
+                args=(
+                    amount_out_min.Wei,
+                    addresses_path,
+                    self.client.account.address,
+                    int(time.time() + 1200)
+                )
             )
+
+        tx_hash_bytes = await self.client.send_transaction(
+            to=router.address,
+            data=data,
+            value=token_amount.Wei if from_token_is_native else 0,
+            max_priority_fee_per_gas=0,
+        )
 
         if not tx_hash_bytes:
             return f'{failed_text} | Can not get tx_hash_bytes'
@@ -115,7 +114,7 @@ class SpaceFi(Base):
         except Exception as err:
             return f' {failed_text} | tx_hash: {tx_hash_bytes.hex()}; error: {err}'
 
-    async def swap_eth_to_usdt(self, token_amount: TokenAmount | None = None, slippage: float = 0.5) -> str:
+    async def swap_eth_to_usdt(self, token_amount: TokenAmount | None = None, slippage: float = 1) -> str:
         # Transaction success (0.001 ETH -> 2.87 USDT)!!
         # tx_hash: 0x358ab333050193e02623c0b81aad6acea73f358eabd35e6c7526a5e7f52b98db
         return await self._swap(
@@ -127,7 +126,7 @@ class SpaceFi(Base):
             slippage=slippage
         )
 
-    async def swap_eth_to_wbtc(self, token_amount: TokenAmount | None = None, slippage: float = 0.5) -> str:
+    async def swap_eth_to_wbtc(self, token_amount: TokenAmount | None = None, slippage: float = 1) -> str:
         # Transaction success (0.0008 ETH -> 0.000029105322888639857 WBTC)!!
         # tx_hash: 0x669310c1ec16ed385e8d0778cc96c05e2bc3d8b2e6d3490f4363b370bc6d2446
         return await self._swap(
@@ -139,7 +138,7 @@ class SpaceFi(Base):
             slippage=slippage
         )
 
-    async def swap_usdc_e_to_eth(self, token_amount: TokenAmount | None = None, slippage: float = 0.5) -> str:
+    async def swap_usdc_e_to_eth(self, token_amount: TokenAmount | None = None, slippage: float = 1) -> str:
         # Transaction success (1.961663 USDC.e -> 0.0006465444482972901 WETH)!!
         # tx_hash: 0x0161e7cb528408427fce8eda171a251632d0b28cb89bf8dfd9616189964ae08b
         return await self._swap(
@@ -152,7 +151,7 @@ class SpaceFi(Base):
             slippage=slippage
         )
 
-    async def swap_usdt_to_eth(self, token_amount: TokenAmount | None = None, slippage: float = 0.5):
+    async def swap_usdt_to_eth(self, token_amount: TokenAmount | None = None, slippage: float = 1):
         # Transaction success (0.0004 ETH -> 1.13988 USDT)!!
         # tx_hash: 0x16ed6ce885e1f65a4a068b5e9253a5ebe2251ae93ed878ab583830515c627fb0
         return await self._swap(
@@ -165,7 +164,7 @@ class SpaceFi(Base):
             slippage=slippage
         )
 
-    async def swap_usdt_to_usdc_e(self, token_amount: TokenAmount | None = None, slippage: float = 0.5) -> str:
+    async def swap_usdt_to_usdc_e(self, token_amount: TokenAmount | None = None, slippage: float = 1) -> str:
         # Transaction success (2.027439 USDT -> 1.946341 USDC.e)!!
         # tx_hash: 0xbd678a795c66238f067a0df7f49c759d7e3bc422a60c8fd7baadd1532566c98c
         return await self._swap(

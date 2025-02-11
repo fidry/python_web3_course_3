@@ -26,15 +26,18 @@ class SyncSwap(Base):
         )
 
         if not token_amount:
-            token_amount = TokenAmount(
-                amount=await from_token_contract.functions.balanceOf(self.client.account.address).call(),
-                decimals=await from_token_contract.functions.decimals().call(),
-                wei=True
-            )
+            if from_token_is_native:
+                token_amount = self.get_eth_amount_for_swap()
+            else:
+                token_amount = TokenAmount(
+                    amount=await from_token_contract.functions.balanceOf(self.client.account.address).call(),
+                    decimals=await from_token_contract.functions.decimals().call(),
+                    wei=True
+                )
 
         failed_text = (f'Failed to swap {token_amount.Ether} {from_token.address} '
                        f'to {to_token.address} via {router.title}')
-        logger.info(f'Start swap {token_amount.Ether} {from_token.title} to {to_token.address} via {router.title}')
+        logger.info(f'Start swap {token_amount.Ether} {from_token.title} to {to_token.title} via {router.title}')
 
         to_token_contract = self.client.w3.eth.contract(
             address=to_token.address,
@@ -124,7 +127,7 @@ class SyncSwap(Base):
 
         try:
             tx_hash = await self.client.verif_tx(tx_hash=tx_hash_bytes)
-            return (f'({router.title}) Transaction success! ({token_amount.Ether} USDC.e -> '
+            return (f'({router.title}) Transaction success! ({token_amount.Ether} {from_token.title} -> '
                     f'{amount_out_min.Ether} {to_token.title}) | tx_hash: {tx_hash}')
         except Exception as err:
             return f' {failed_text} | tx_hash: {tx_hash_bytes.hex()}; error: {err}'

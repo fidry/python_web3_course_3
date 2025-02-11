@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from eth_typing import ChecksumAddress
 from web3 import AsyncWeb3
 
-# from libs.eth_async.data.models import RawContract, DefaultABIs
 from py_okx_async.models import OKXCredentials
 from utils.files_utils import read_json
 from data.config import SETTINGS_FILE, ABIS_DIR

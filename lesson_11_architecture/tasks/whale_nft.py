@@ -2,20 +2,17 @@ from web3 import AsyncWeb3
 from web3.contract.async_contract import AsyncContract
 
 from client import Client
+from tasks.base import Base
 from data.config import logger
 from data.models import Contracts
 
 
-class WhaleNft:
-    MINT_ABI_PATH = ('data', 'abis', 'whale-app', 'mint_abi.json')
+class WhaleNft(Base):
     MINT_ADDRESS_DICT = {
         # 'Polygon': '0xE1c907503B8d1545AFD5A89cc44FC1E538A132DA',
         # 'Arbitrum One': '0x26E9934024cdC7fcc9f390973d4D9ac1FA954a37',
         'zkSync Era': Contracts.WHALE_NFT_ROUTER.address
     }
-    
-    def __init__(self, client: Client):
-        self.client = client
     
     def get_mint_contract_by_network(self, network_name: str):
         if network_name not in self.MINT_ADDRESS_DICT:

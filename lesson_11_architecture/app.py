@@ -5,8 +5,6 @@ from loguru import logger
 from functions.create_files import create_files
 from functions.Import import Import
 from data.models import Settings
-from utils.db_api.wallet_api import get_wallets
-from utils.db_api.models import Wallet
 from functions.initial import initial
 from functions.activity import activity
 
