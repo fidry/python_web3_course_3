@@ -19,6 +19,7 @@ async def select_random_action(controller: Controller, wallet: Wallet, initial: 
 
     swaps = 0
     mints_nft = 0
+    dmail = 0
 
     eth_balance = await controller.client.balance()
     usdc_e_balance = await controller.client.balance(token_address=Contracts.USDC_E.address)
@@ -37,9 +38,11 @@ async def select_random_action(controller: Controller, wallet: Wallet, initial: 
         )
         swaps = await controller.count_swaps(txs_lst=txs_lst)
         mints_nft = await controller.count_mints_nft(txs_lst=txs_lst)
+        dmail = await controller.count_dmail(txs_lst=txs_lst)
         logger.info(
             f'{wallet.address} | amount swaps: {swaps}/{wallet.number_of_swaps}; '
             f'amount mits nft: {mints_nft}/{wallet.number_of_mint_nft}; '
+            f'amount dmail: {dmail}/{wallet.number_of_dmail}; '
         )
 
         if swaps >= wallet.number_of_swaps and mints_nft >= wallet.number_of_mint_nft:
@@ -89,6 +92,15 @@ async def select_random_action(controller: Controller, wallet: Wallet, initial: 
 
         weights += [
             0.5,
+        ]
+
+    if float(eth_balance.Ether) > settings.minimal_balance and dmail < wallet.number_of_dmail:
+        possible_actions += [
+            controller.dmail.send_dmail,
+        ]
+
+        weights += [
+            1,
         ]
 
     if possible_actions:

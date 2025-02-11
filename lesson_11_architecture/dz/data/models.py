@@ -88,6 +88,8 @@ class Settings:
             from_=json_data['number_of_swaps']['from'], to_=json_data['number_of_swaps']['to'])
         self.number_of_mint_nft: FromTo = FromTo(
             from_=json_data['number_of_mint_nft']['from'], to_=json_data['number_of_mint_nft']['to'])
+        self.number_of_dmail: FromTo = FromTo(
+            from_=json_data['number_of_dmail']['from'], to_=json_data['number_of_dmail']['to'])
 
         self.initial_actions_delay: FromTo = FromTo(
             from_=json_data['initial_actions_delay']['from'], to_=json_data['initial_actions_delay']['to']
@@ -226,6 +228,12 @@ class Contracts:
         title='WhaleNFT',
         address=AsyncWeb3.to_checksum_address('0xF09A71F6CC8DE983dD58Ca474cBC33de43DDEBa9'),
         abi=read_json(path=(ABIS_DIR, 'whale-app', 'mint_abi.json'))
+    )
+
+    DMAIL = RawContract(
+        title='dmail',
+        address=AsyncWeb3.to_checksum_address('0x981F198286E40F9979274E0876636E9144B8FB8E'),
+        abi=read_json(path=(ABIS_DIR, 'dmail', 'dmail.json'))
     )
 
     # tokens

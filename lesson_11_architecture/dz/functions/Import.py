@@ -63,6 +63,8 @@ class Import:
                         settings.number_of_swaps.from_, settings.number_of_swaps.to_),
                     number_of_mint_nft=random.randint(
                         settings.number_of_mint_nft.from_, settings.number_of_mint_nft.to_),
+                    number_of_dmail=random.randint(
+                        settings.number_of_dmail.from_, settings.number_of_dmail.to_)
                 )
                 db.insert(wallet_instance)
                 imported.append(wallet_instance)

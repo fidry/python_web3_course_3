@@ -43,6 +43,7 @@ def create_files():
         'minimal_balance': 0.0005,
         'number_of_swaps': {'from': 5, 'to': 10},
         'number_of_mint_nft': {'from': 1, 'to': 2},
+        'number_of_dmail': {'from': 1, 'to': 2},
         'initial_actions_delay': {'from': 3600, 'to': 14400},
         'activity_actions_delay': {'from': 259200, 'to': 604800},
         'eth_amount_for_swap': {'from': 0.0001, 'to': 0.0008},

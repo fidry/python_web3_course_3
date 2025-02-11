@@ -19,6 +19,7 @@ class Wallet(Base):
     okx_address: Mapped[str]
     number_of_swaps: Mapped[int]
     number_of_mint_nft: Mapped[int]
+    number_of_dmail: Mapped[int]
     next_initial_action_time: Mapped[datetime | None] = mapped_column(default=None)
     next_activity_action_time: Mapped[datetime | None] = mapped_column(default=None)
     initial_completed: Mapped[bool] = mapped_column(default=False, server_default='0')
